@@ -4,10 +4,9 @@ import urlparse
 
 import xbmcgui
 import xbmcplugin
-import xbmc
 import resources.lib.deejayItParser as deejay
-
 import xbmcaddon
+
 __settings__ = xbmcaddon.Addon(id='plugin.audio.deejayIt.reloaded')
 __language__ = __settings__.getLocalizedString
 
@@ -42,7 +41,6 @@ elif mode[0] == 'epList':
     progName = args['progName'][0]
     lastReloadedUrl = args['lastReloadedUrl'][0]
     episodi, nextpage = deejay.get_episodi(lastReloadedUrl)
-    #print nextpage
 
     for ep in episodi:
         #       ('http://www.deejay.it/audio/20121203-2/271391/', 'Puntata del 3 Dicembre 201
@@ -50,6 +48,7 @@ elif mode[0] == 'epList':
                          'epUrl': ep[0]})
         li = xbmcgui.ListItem(ep[1],
                               iconImage='DefaultAudio.png')
+        li.setProperty('IsPlayable', 'true')
         xbmcplugin.addDirectoryItem(handle=addon_handle,
                                     url=url,
                                     listitem=li)
@@ -70,9 +69,7 @@ elif mode[0] == 'epList':
     xbmcplugin.endOfDirectory(addon_handle)
 
 elif mode[0] == 'play':
-    dialog=xbmcgui.DialogProgress()
-    dialog.create('Starting playback','...')
-    epUrl = args['epUrl'][0]
-    dialog.close()
-    xbmc.Player().play(deejay.get_epfile(epUrl))
-
+    url = deejay.get_epfile(args['epUrl'][0])
+    item = xbmcgui.ListItem(path=url)
+    xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+    xbmcplugin.endOfDirectory(addon_handle)
