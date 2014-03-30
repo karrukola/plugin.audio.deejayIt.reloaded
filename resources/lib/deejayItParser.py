@@ -24,11 +24,20 @@ def get_reloaded_list():
     return response
 
 
-def get_episodi(url):
+def get_episodi(url, oldimg):
     page = urllib2.urlopen(url).read()
     new_url = re.findall('^.*a\shref="(http.+audio\?.+)".*title.*rchivio.*$',
                          page,
                          re.MULTILINE)
+    #addParam('param', 'image', 'http://www.deejay.it/wp-content/uploads/2013/05/cordialmente.jpg');
+    new_img = re.findall('addParam\(\'param\', \'image\', \'(http://www\.deejay\.it/wp-content/uploads/.*)\'.*$',
+                         page,
+                         re.MULTILINE)
+    if new_img:
+        img = new_img[0]
+    else:
+        img = oldimg
+
     if new_url:
         url = new_url[0]
         page = urllib2.urlopen(url).read()
@@ -42,8 +51,6 @@ def get_episodi(url):
     show_reloaded = re.findall('http://www.deejay.it/audio[/page/\d]*\?reloaded=(.*)',
                                url)[0]
 
-    #print 'reloaded: '+show_reloaded
-    #print page
     #Passo finale: aggiungi il link alla pagina successiva
     #<a href='http://www.deejay.it/audio/page/2/?reloaded=dee-giallo' class='nextpostslink'></a>
 
@@ -56,9 +63,7 @@ def get_episodi(url):
     else:
         nextpage = ''
 
-    #    print 'nextpage: '+nextpage
-
-    return episodi, nextpage
+    return episodi, nextpage, img
 
 
 def get_epfile(url):
