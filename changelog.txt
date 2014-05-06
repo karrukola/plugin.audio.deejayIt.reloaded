@@ -1,2 +1,6 @@
+[B]1.1.1[/B]
+- Introduces show-specific background et thumbnail during playback
+[B]1.0.2[/B]
+- Fixes remarks/issues arose after submission.
 [B]1.0.0[/B]
 - first release
