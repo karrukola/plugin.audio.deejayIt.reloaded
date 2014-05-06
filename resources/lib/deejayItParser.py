@@ -68,10 +68,14 @@ def get_episodi(url, oldimg):
 
 def get_epfile(url):
     page = urllib2.urlopen(url).read()
-    fileurl = re.findall('^.*(http.*\.mp3)\s*</p>.*$',
+    fileurl = re.findall('^.*(http.*\.(?:mp3|wma))\s*</p>.*$',
                          page,
                          re.MULTILINE)
-    return fileurl[0]
+    if fileurl:
+        out = fileurl[0]
+    else:
+        out = ''
+    return out
 
 
 programmi = get_reloaded_list()
