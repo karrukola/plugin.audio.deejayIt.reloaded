@@ -52,7 +52,9 @@ elif mode[0] == 'epList':
         #('http://www.deejay.it/audio/20121203-2/271391/', 'Puntata del 3 Dicembre 2013)
         url = build_url({'mode': 'play',
                          'epUrl': ep[0],
-                         'showThumb': showThumb})
+                         'showThumb': showThumb,
+                         'title': ep[1],
+                         'progName': progName})
         li = xbmcgui.ListItem(ep[1],
                               iconImage='DefaultAudio.png')
         li.setProperty('IsPlayable', 'true')
@@ -81,5 +83,8 @@ elif mode[0] == 'play':
     url = deejay.get_epfile(args['epUrl'][0])
     item = xbmcgui.ListItem(path=url)
     item.setThumbnailImage(args['showThumb'][0])
+    item.setInfo('music', {'title': args['title'][0],
+                           'album': args['progName'][0],
+                           'artist': 'Radio Deejay'})
     xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
     xbmcplugin.endOfDirectory(addon_handle)
