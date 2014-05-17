@@ -1,3 +1,5 @@
+[B]1.1.4[/B]
+- Adding date to listItems, so the users can sort them according this property, by title, or keep the raw data order
 [B]1.1.3[/B]
 - Showing episode's specific information
 [B]1.1.2[/B]

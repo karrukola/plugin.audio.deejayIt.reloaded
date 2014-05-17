@@ -17,6 +17,10 @@ addon_handle = int(sys.argv[1])
 args = urlparse.parse_qs(sys.argv[2][1:])
 
 xbmcplugin.setContent(addon_handle, 'episodes')
+xbmcplugin.addSortMethod(addon_handle, xbmcplugin.SORT_METHOD_TITLE)
+xbmcplugin.addSortMethod(addon_handle, xbmcplugin.SORT_METHOD_DATE)
+xbmcplugin.addSortMethod(addon_handle, xbmcplugin.SORT_METHOD_UNSORTED)
+xbmcplugin.addSortMethod(addon_handle, xbmcplugin.SORT_METHOD_NONE)
 
 
 def build_url(query):
@@ -34,6 +38,8 @@ if mode is None:
                          'fanArt': ['']})
         #showThumbm, parsata da programmi, deve essere usata da play -> inoltrata attraverso i modi
         li = xbmcgui.ListItem(prog[0], iconImage=prog[1])
+        data = prog[3][6:8] + '.' + prog[3][4:6] + '.' + prog[3][0:4]
+        li.setInfo('music', {'date': data})
         xbmcplugin.addDirectoryItem(handle=addon_handle,
                                     url=url,
                                     listitem=li,
@@ -49,16 +55,19 @@ elif mode[0] == 'epList':
 
     episodi, nextpage, img = deejay.get_episodi(url=lastReloadedUrl, oldimg=fanArt)
     for ep in episodi:
-        #('http://www.deejay.it/audio/20121203-2/271391/', 'Puntata del 3 Dicembre 2013)
+        #('http://www.deejay.it/audio/20071120-2/278354/', '20071120', 'Puntata del 20 Novembre 2007')
         url = build_url({'mode': 'play',
                          'epUrl': ep[0],
                          'showThumb': showThumb,
-                         'title': ep[1],
+                         'title': ep[2],
                          'progName': progName})
-        li = xbmcgui.ListItem(ep[1],
+        #Per alcuni episodi (e.g. Deejay Chiama Italia 2014-05-06) la cartella non ha il nome atteso, anno dato come 2015
+        data = ep[1][6:8] + '.' + ep[1][4:6] + '.' + ep[2][-4:]
+        li = xbmcgui.ListItem(ep[2],
                               iconImage='DefaultAudio.png')
         li.setProperty('IsPlayable', 'true')
         li.setProperty('fanart_image', img)
+        li.setInfo('music', {'date': data})
         xbmcplugin.addDirectoryItem(handle=addon_handle,
                                     url=url,
                                     listitem=li)

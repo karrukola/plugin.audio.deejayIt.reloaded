@@ -8,18 +8,18 @@ def get_reloaded_list():
     response = []
 
     #trova la lista programmi
-    prog_list = re.findall('^.*<a\shref="(http://www\.deejay\.it/audio/.*)".*title="(.+)".*<span>.*$',
+    prog_list = re.findall('^.*<a\shref="(http://www\.deejay\.it/audio/([0-9]{8}).*/)".*title="(.+)".*<span>.*$',
                            page,
                            re.MULTILINE)
-
-    #Tupla: (nome show , icona , url ultimo episodio)
+    #Tupla: (nome show , icona , url ultimo episodio, data)
     for prog in prog_list:
         #per ogni programma aggiungi l'icona
-        response.append((prog[1],
-                         re.search('^\s*<img\ssrc="(http://www\.deejay\.it/wp-content/uploads/.+)".*\salt="' + prog[1],
+        response.append((prog[2],
+                         re.search('^\s*<img\ssrc="(http://www\.deejay\.it/wp-content/uploads/.+)".*\salt="' + prog[2],
                                    page,
                                    re.MULTILINE).group(1),
-                         prog[0]))
+                         prog[0],
+                         prog[1]))
 
     return response
 
@@ -44,9 +44,10 @@ def get_episodi(url, oldimg):
 
     #programma: TUPLA contente titolo e URL, dall'URL devi caricare ogni pagina per trovare l'indirizzo del file audio
     #<a title="Puntata del 10 Dicembre 2012" href="http://www.deejay.it/audio/20121210-3/271333/"></a>
-    episodi = re.findall('^\s*<a\shref="(.*/audio.*)"\s+title="(.*)".*$',
+    episodi = re.findall('^\s*<a\shref="(.*/audio/([0-9]{8}).*)"\s+title="(.*)".*$',
                          page,
                          re.MULTILINE)
+    # ('http://www.deejay.it/audio/20071120-2/278354/', '20071120', 'Puntata del 20 Novembre 2007')
 
     show_reloaded = re.findall('http://www.deejay.it/audio[/page/\d]*\?reloaded=(.*)',
                                url)[0]
@@ -88,8 +89,7 @@ programmi = get_reloaded_list()
 #print p
 #eps = get_episodi(p)
 
-#eps = get_episodi('http://www.deejay.it/audio/page/14/?reloaded=dee-giallo')
-#print eps[0][0]
+#eps = get_episodi('http://www.deejay.it/audio/page/13/?reloaded=dee-giallo','')
 
 #fileurl = get_epfile('http://www.deejay.it/audio/20130527-3/269977/')
 #print fileurl
