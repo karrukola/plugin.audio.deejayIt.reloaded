@@ -17,10 +17,8 @@ addon_handle = int(sys.argv[1])
 args = urlparse.parse_qs(sys.argv[2][1:])
 
 xbmcplugin.setContent(addon_handle, 'episodes')
-xbmcplugin.addSortMethod(addon_handle, xbmcplugin.SORT_METHOD_TITLE)
-xbmcplugin.addSortMethod(addon_handle, xbmcplugin.SORT_METHOD_DATE)
 xbmcplugin.addSortMethod(addon_handle, xbmcplugin.SORT_METHOD_UNSORTED)
-xbmcplugin.addSortMethod(addon_handle, xbmcplugin.SORT_METHOD_NONE)
+xbmcplugin.addSortMethod(addon_handle, xbmcplugin.SORT_METHOD_DATE)
 
 
 def build_url(query):
