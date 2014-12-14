@@ -1,26 +1,36 @@
 import re
 import urllib2
-
+from lxml import etree as ET
 
 def get_reloaded_list():
+#  This returns an array of tuples containing:
+#  Program name
+#  Thumbnail URL
+#  Last episode
+#  Date
+#   ('Deejay chiama Italia',
+#     'http://www.deejay.it/wp-content/uploads/2013/05/DJCI-150x150.jpg',
+#     'http://www.deejay.it/audio/20141212-4/412626/',
+#     '20141212')
+
     url = "http://www.deejay.it/reloaded/radio/"
-    page = urllib2.urlopen(url).read()
     response = []
 
-    #trova la lista programmi
-    prog_list = re.findall('^.*<a\shref="(http://www\.deejay\.it/audio/([0-9]{8}).*/)".*title="(.+)".*<span>.*$',
-                           page,
-                           re.MULTILINE)
-    #Tupla: (nome show , icona , url ultimo episodio, data)
-    for prog in prog_list:
-        #per ogni programma aggiungi l'icona
-        response.append((prog[2],
-                         re.search('^\s*<img\ssrc="(http://www\.deejay\.it/wp-content/uploads/.+)".*\salt="' + prog[2],
-                                   page,
-                                   re.MULTILINE).group(1),
-                         prog[0],
-                         prog[1]))
+    tree = ET.parse(urllib2.urlopen(url), ET.HTMLParser())
+    root = tree.getroot()
 
+    #Trova la lista programmi
+    #TODO!!! la lista programmi copre più pagine. Funzione ricorsiva?
+    prog_list = root.findall(".//ul[@class='block-grid four-up mobile-two-up']/li")
+
+    for prog in prog_list:
+        prog_name_url = prog.find("./a").attrib
+        response.append(
+            (prog_name_url['title'],
+            prog.find("./a/img").attrib['src'],
+            prog_name_url['href'],
+            prog.find("./hgroup/span").text)
+            )
     return response
 
 
@@ -50,7 +60,7 @@ def get_episodi(url, oldimg):
     # ('http://www.deejay.it/audio/20071120-2/278354/', '20071120', 'Puntata del 20 Novembre 2007')
 
     show_reloaded = re.findall('http://www.deejay.it/audio[/page/\d]*\?reloaded=(.*)',
-                               url)[0]
+                                url)[0]
 
     #Passo finale: aggiungi il link alla pagina successiva
     #<a href='http://www.deejay.it/audio/page/2/?reloaded=dee-giallo' class='nextpostslink'></a>
@@ -81,9 +91,9 @@ def get_epfile(url):
 
 programmi = get_reloaded_list()
 
-#   ---------------------------------------------------
-#for p in programmi:
-#    print p
+#    ---------------------------------------------------
+for p in programmi:
+    print p
 
 #p = programmi[17][2]
 #print p
