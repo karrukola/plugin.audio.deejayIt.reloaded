@@ -20,6 +20,7 @@ def get_reloaded_list():
     root = tree.getroot()
 
     #Trova la lista programmi
+    #TODO!!! funzione per tradurre la data (come gestisce 2014/2015?)
     #TODO!!! la lista programmi copre più pagine. Funzione ricorsiva?
     prog_list = root.findall(".//ul[@class='block-grid four-up mobile-two-up']/li")
 
