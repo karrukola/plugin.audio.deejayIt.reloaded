@@ -19,18 +19,18 @@ def get_reloaded_list():
     tree = ET.parse(urllib2.urlopen(url), ET.HTMLParser())
     root = tree.getroot()
 
-    #Trova la lista programmi
-    #TODO!!! funzione per tradurre la data (come gestisce 2014/2015?)
-    #TODO!!! la lista programmi copre più pagine. Funzione ricorsiva?
-    prog_list = root.findall(".//ul[@class='block-grid four-up mobile-two-up']/li")
+    #Trova la lista PROGRAMMI
+    #TODO!!! funzione per tradurre la data (come gestisce 2014/2015)
+    #TODO!!! la lista PROGRAMMI copre piu pagine. Funzione ricorsiva
 
+    prog_list = root.findall(".//ul[@class='block-grid four-up mobile-two-up']/li")
     for prog in prog_list:
         prog_name_url = prog.find("./a").attrib
         response.append(
             (prog_name_url['title'],
-            prog.find("./a/img").attrib['src'],
-            prog_name_url['href'],
-            prog.find("./hgroup/span").text)
+                prog.find("./a/img").attrib['src'],
+                prog_name_url['href'],
+                prog.find("./hgroup/span").text)
             )
     return response
 
@@ -79,28 +79,26 @@ def get_episodi(url, oldimg):
 
 
 def get_epfile(url):
-    page = urllib2.urlopen(url).read()
-    fileurl = re.findall('^.*(http.*\.(?:mp3|wma))\s*</p>.*$',
-                         page,
-                         re.MULTILINE)
-    if fileurl:
-        out = fileurl[0]
+    tree = ET.parse(urllib2.urlopen(url), ET.HTMLParser())
+    root = tree.getroot()
+    fileurl = root.find(".//div[@id='playerCont']/p")
+
+    if fileurl is not None:
+        return fileurl.text
     else:
-        out = ''
-    return out
+        return fileurl
 
-
-programmi = get_reloaded_list()
+PROGRAMMI = get_reloaded_list()
 
 #    ---------------------------------------------------
-for p in programmi:
+for p in PROGRAMMI:
     print p
 
-#p = programmi[17][2]
+#p = PROGRAMMI[17][2]
 #print p
 #eps = get_episodi(p)
 
 #eps = get_episodi('http://www.deejay.it/audio/page/13/?reloaded=dee-giallo','')
 
-#fileurl = get_epfile('http://www.deejay.it/audio/20130527-3/269977/')
-#print fileurl
+fileurl = get_epfile('http://www.deejay.it/audio/20130527-3/269977/')
+print fileurl
