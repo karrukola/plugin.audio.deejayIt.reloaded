@@ -28,13 +28,13 @@ def build_url(query):
 mode = args.get('mode', None)
 
 if mode is None:
-    for prog in deejay.programmi:
+    for prog in deejay.PROGRAMMI:
         url = build_url({'mode': 'epList',
                          'progName': prog[0],
                          'lastReloadedUrl': prog[2],
                          'showThumb': prog[1],
                          'fanArt': ['']})
-        #showThumbm, parsata da programmi, deve essere usata da play -> inoltrata attraverso i modi
+        #showThumbm, parsata da PROGRAMMI, deve essere usata da play -> inoltrata attraverso i modi
         li = xbmcgui.ListItem(prog[0], iconImage=prog[1])
         data = prog[3][6:8] + '.' + prog[3][4:6] + '.' + prog[3][0:4]
         li.setInfo('music', {'date': data})
