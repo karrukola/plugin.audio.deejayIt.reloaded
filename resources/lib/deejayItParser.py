@@ -21,16 +21,16 @@ def translatedate(eptitle):
             anno = hit[0][3]
         else:
             anno = ANNO
-        translateddate = str(anno)+str(mese).rjust(2, '0')+giorno.rjust(2, '0')
+        dataep = str(anno)+str(mese).rjust(2, '0')+giorno.rjust(2, '0')
 
         #Sometimes the year is not given, this part checks whether the #returned date is in the future and eventually adjusts it.
         #This works under the hypotesis that the website never returns a date #in the future
         today = str(ANNO)+str(MESE).rjust(2, '0')+str(GIORNO).rjust(2, '0')
-        if translateddate > today:
-            translateddate = str(int(translateddate[0:4])-1) + translateddate[4:]
+        if dataep > today:
+            dataep = str(int(dataep[0:4])-1) + dataep[4:]
+        translateddate = dataep[6:8]+'.'+dataep[4:6]+'.'+dataep[0:4]
     else:
-        translateddate = ''
-
+        translateddate = '19.12.1982' #I intervento del Gerry Scotti speaker
     return translateddate
 
 def get_reloaded_list_in_page(url, response):
@@ -121,7 +121,6 @@ def get_episodi(url, oldimg):
         nextpageurl = ''
     else:
         nextpageurl = nextpage[0].attrib['href']
-    
     return lista_episodi, nextpageurl, img
 
 def get_epfile(url):

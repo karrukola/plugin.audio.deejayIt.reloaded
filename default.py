@@ -59,13 +59,15 @@ elif mode[0] == 'epList':
                          'showThumb': showThumb,
                          'title': ep[2],
                          'progName': progName})
-        #Per alcuni episodi (e.g. Deejay Chiama Italia 2014-05-06) la cartella non ha il nome atteso, anno dato come 2015
-        data = ep[1][6:8] + '.' + ep[1][4:6] + '.' + ep[2][-4:]
         li = xbmcgui.ListItem(ep[2],
                               iconImage='DefaultAudio.png')
         li.setProperty('IsPlayable', 'true')
+        #Setting fanArt
+        #not using setArt to keep Frodo's compatibility
+        #li.setArt({'fanart' : img})
         li.setProperty('fanart_image', img)
-        li.setInfo('music', {'date': data})
+        
+        li.setInfo('music', {'date': ep[1]})
         xbmcplugin.addDirectoryItem(handle=addon_handle,
                                     url=url,
                                     listitem=li)
