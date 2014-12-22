@@ -8,7 +8,7 @@ import resources.lib.deejayItParser as deejay
 import xbmcaddon
 
 
-__settings__ = xbmcaddon.Addon(id='plugin.audio.deejayIt.reloaded')
+__settings__ = xbmcaddon.Addon(id='plugin.audio.deejayIt.reloaded.local')
 __language__ = __settings__.getLocalizedString
 
 
@@ -36,8 +36,7 @@ if mode is None:
                          'fanArt': ['']})
         #showThumbm, parsata da PROGRAMMI, deve essere usata da play -> inoltrata attraverso i modi
         li = xbmcgui.ListItem(prog[0], iconImage=prog[1])
-        data = prog[3][6:8] + '.' + prog[3][4:6] + '.' + prog[3][0:4]
-        li.setInfo('music', {'date': data})
+        li.setInfo('music', {'date': prog[3]})
         xbmcplugin.addDirectoryItem(handle=addon_handle,
                                     url=url,
                                     listitem=li,
@@ -51,7 +50,8 @@ elif mode[0] == 'epList':
     showThumb = args['showThumb'][0]
     fanArt = args['fanArt'][0]
 
-    episodi, nextpage, img = deejay.get_episodi(url=lastReloadedUrl, oldimg=fanArt)
+    episodi, nextpage, img = deejay.get_episodi(url=lastReloadedUrl,
+        oldimg=fanArt)
     for ep in episodi:
         #('http://www.deejay.it/audio/20071120-2/278354/', '20071120', 'Puntata del 20 Novembre 2007')
         url = build_url({'mode': 'play',
