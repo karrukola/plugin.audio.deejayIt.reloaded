@@ -116,8 +116,8 @@ def get_epfile(url):
 PROGRAMMI = get_reloaded_list()
 
 #    ---------------------------------------------------
-for p in PROGRAMMI:
-    print p
+#for p in PROGRAMMI:
+#    print p
 
 #p = PROGRAMMI[17][2]
 #print p

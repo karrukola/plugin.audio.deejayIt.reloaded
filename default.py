@@ -28,7 +28,7 @@ def build_url(query):
 mode = args.get('mode', None)
 
 if mode is None:
-    for prog in deejay.PROGRAMMI:
+    for prog in deejay.get_reloaded_list():
         url = build_url({'mode': 'epList',
                          'progName': prog[0],
                          'lastReloadedUrl': prog[2],
