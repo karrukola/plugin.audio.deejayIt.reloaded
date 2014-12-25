@@ -27,13 +27,45 @@ def translatedate(eptitle):
         #This works under the hypotesis that the website never returns a date #in the future
         today = str(ANNO)+str(MESE).rjust(2, '0')+str(GIORNO).rjust(2, '0')
         if translateddate > today:
-            translateddate = str(int(translateddate [0:4])-1) + translateddate[4:]
+            translateddate = str(int(translateddate[0:4])-1) + translateddate[4:]
     else:
         translateddate = ''
 
     return translateddate
 
+def get_reloaded_list_in_page(url, response):
+#  This returns an array of tuples containing:
+#  (Program name,
+#  Thumbnail URL,
+#  Last episode,
+#  Date)
+#   ('Deejay chiama Italia',
+#     'http://www.deejay.it/wp-content/uploads/2013/05/DJCI-150x150.jpg',
+#     'http://www.deejay.it/audio/20141212-4/412626/',
+#     '20141212')
+# from a single page of the website
+
+    root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
+    prog_list = root.xpath(".//ul[@class='block-grid four-up mobile-two-up']/li")
+    for prog in prog_list:
+        prog_name_url = prog.xpath("./a")[0].attrib
+        response.append(
+            (prog_name_url['title'],
+                prog.xpath("./a/img")[0].attrib['src'],
+                prog_name_url['href'],
+                translatedate(prog.xpath("./hgroup/span")[0].text))
+            )
+    nextpage = root.xpath(".//a[@class='nextpostslink']")
+    if not nextpage:
+        nextpageurl = ''
+    else:
+        nextpageurl = nextpage[0].attrib['href']
+
+    return response, nextpageurl
+
+
 def get_reloaded_list():
+#  This crawls over all the pages to return the complete list of reloaded shows
 #  This returns an array of tuples containing:
 #  (Program name,
 #  Thumbnail URL,
@@ -45,23 +77,11 @@ def get_reloaded_list():
 #     '20141212')
 
     url = "http://www.deejay.it/reloaded/radio/"
-    response = []
+    lista, nextpageurl = get_reloaded_list_in_page(url, [])
+    while nextpageurl:
+        lista, nextpageurl = get_reloaded_list_in_page(nextpageurl, lista)
 
-    root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
-
-    #Trova la lista PROGRAMMI
-    #TODO!!! la lista PROGRAMMI copre piu pagine. Funzione ricorsiva?
-
-    prog_list = root.xpath(".//ul[@class='block-grid four-up mobile-two-up']/li")
-    for prog in prog_list:
-        prog_name_url = prog.xpath("./a")[0].attrib
-        response.append(
-            (prog_name_url['title'],
-                prog.xpath("./a/img")[0].attrib['src'],
-                prog_name_url['href'],
-                translatedate(prog.xpath("./hgroup/span")[0].text))
-            )
-    return response
+    return lista
 
 def get_episodi(url, oldimg):
     root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
@@ -81,8 +101,6 @@ def get_episodi(url, oldimg):
 
     new_url = root.xpath(".//span[@class='small-title']/a")
     if new_url is not None:
-        print "Archivio+:"
-        print new_url[0].attrib['href']
         root = ET.parse(urllib2.urlopen(new_url[0].attrib['href']),
             ET.HTMLParser()).getroot()
     lista_episodi = []
@@ -115,9 +133,9 @@ def get_epfile(url):
     else:
         return ''
 
-#PROGRAMMI = get_reloaded_list()
 
 #    ---------------------------------------------------
+#PROGRAMMI = get_reloaded_list()
 #for p in PROGRAMMI:
 #    print p
 
