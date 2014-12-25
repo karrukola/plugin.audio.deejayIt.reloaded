@@ -90,7 +90,7 @@ def get_episodi(url, oldimg):
         img = oldimg
     else:
         snippet = root.xpath(".//article[@class='twelve columns video player audio']/script")
-        if snippet is not None:
+        if snippet:
             new_img = re.findall(".*addParam.*'param', 'image', '(http://www.deejay.it/.*)'.*",
                 snippet[0].text,
                 re.MULTILINE)
@@ -100,13 +100,13 @@ def get_episodi(url, oldimg):
             img = ''
 
     new_url = root.xpath(".//span[@class='small-title']/a")
-    if new_url is not None:
+    if new_url:
         root = ET.parse(urllib2.urlopen(new_url[0].attrib['href']),
             ET.HTMLParser()).getroot()
     lista_episodi = []
     episodi = root.xpath(".//ul[@class='lista']/li/a")
 
-    if episodi is not None:
+    if episodi:
         for episodio in episodi:
             lista_episodi.append(
                 (
@@ -117,21 +117,20 @@ def get_episodi(url, oldimg):
 
     #Passo finale: aggiungi il link alla pagina successiva
     nextpage = root.xpath(".//a[@class='nextpostslink']")
-    if nextpage is None:
+    if not nextpage:
         nextpageurl = ''
     else:
         nextpageurl = nextpage[0].attrib['href']
-
+    
     return lista_episodi, nextpageurl, img
 
 def get_epfile(url):
     root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
     fileurl = root.xpath(".//div[@id='playerCont']/p")
-
-    if fileurl is not None:
-        return fileurl[0].text
-    else:
+    if not fileurl:
         return ''
+    else:
+        return fileurl[0].text
 
 
 #    ---------------------------------------------------
