@@ -8,7 +8,7 @@ import resources.lib.deejayItParser as deejay
 import xbmcaddon
 
 
-__settings__ = xbmcaddon.Addon(id='plugin.audio.deejayIt.reloaded.local')
+__settings__ = xbmcaddon.Addon(id='plugin.audio.deejayIt.reloaded')
 __language__ = __settings__.getLocalizedString
 
 
