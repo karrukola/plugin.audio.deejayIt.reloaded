@@ -52,14 +52,14 @@ def get_reloaded_list():
     #Trova la lista PROGRAMMI
     #TODO!!! la lista PROGRAMMI copre piu pagine. Funzione ricorsiva?
 
-    prog_list = root.findall(".//ul[@class='block-grid four-up mobile-two-up']/li")
+    prog_list = root.xpath(".//ul[@class='block-grid four-up mobile-two-up']/li")
     for prog in prog_list:
-        prog_name_url = prog.find("./a").attrib
+        prog_name_url = prog.xpath("./a")[0].attrib
         response.append(
             (prog_name_url['title'],
-                prog.find("./a/img").attrib['src'],
+                prog.xpath("./a/img")[0].attrib['src'],
                 prog_name_url['href'],
-                translatedate(prog.find("./hgroup/span").text))
+                translatedate(prog.xpath("./hgroup/span")[0].text))
             )
     return response
 
@@ -69,22 +69,24 @@ def get_episodi(url, oldimg):
     if oldimg:
         img = oldimg
     else:
-        snippet = root.find(".//article[@class='twelve columns video player audio']/script")
+        snippet = root.xpath(".//article[@class='twelve columns video player audio']/script")
         if snippet is not None:
             new_img = re.findall(".*addParam.*'param', 'image', '(http://www.deejay.it/.*)'.*",
-                snippet,
+                snippet[0].text,
                 re.MULTILINE)
             if new_img:
                 img = new_img[0]
         else:
             img = ''
 
-    new_url = root.find(".//span[@class='small-title']/a")
+    new_url = root.xpath(".//span[@class='small-title']/a")
     if new_url is not None:
-        root = ET.parse(urllib2.urlopen(new_url.attrib['href']),
+        print "Archivio+:"
+        print new_url[0].attrib['href']
+        root = ET.parse(urllib2.urlopen(new_url[0].attrib['href']),
             ET.HTMLParser()).getroot()
     lista_episodi = []
-    episodi = root.findall(".//ul[@class='lista']/li/a")
+    episodi = root.xpath(".//ul[@class='lista']/li/a")
 
     if episodi is not None:
         for episodio in episodi:
@@ -96,24 +98,24 @@ def get_episodi(url, oldimg):
                 )
 
     #Passo finale: aggiungi il link alla pagina successiva
-    nextpage = root.find(".//a[@class='nextpostslink']")
+    nextpage = root.xpath(".//a[@class='nextpostslink']")
     if nextpage is None:
         nextpageurl = ''
     else:
-        nextpageurl = nextpage.attrib['href']
+        nextpageurl = nextpage[0].attrib['href']
 
     return lista_episodi, nextpageurl, img
 
 def get_epfile(url):
     root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
-    fileurl = root.find(".//div[@id='playerCont']/p")
+    fileurl = root.xpath(".//div[@id='playerCont']/p")
 
     if fileurl is not None:
-        return fileurl.text
+        return fileurl[0].text
     else:
         return ''
 
-PROGRAMMI = get_reloaded_list()
+#PROGRAMMI = get_reloaded_list()
 
 #    ---------------------------------------------------
 #for p in PROGRAMMI:
@@ -124,6 +126,7 @@ PROGRAMMI = get_reloaded_list()
 
 #eps = get_episodi('http://www.deejay.it/audio/page/13/?reloaded=dee-giallo', '')
 #eps = get_episodi('http://www.deejay.it/audio/20141215-10/412901/','')
+#eps = get_episodi('http://www.deejay.it/audio/20141223-2/414155/', 'pippo')
 #for e in eps:
 #    print e
 
