@@ -28,7 +28,7 @@ def build_url(query):
 mode = args.get('mode', None)
 
 if mode is None:
-    for prog in deejay.get_reloaded_list():
+    for idx, prog in deejay.get_reloaded_list():
         url = build_url({'mode': 'epList',
                          'progName': prog[0],
                          'lastReloadedUrl': prog[2],
@@ -36,7 +36,7 @@ if mode is None:
                          'fanArt': ['']})
         #showThumbm, parsata da PROGRAMMI, deve essere usata da play -> inoltrata attraverso i modi
         li = xbmcgui.ListItem(prog[0], iconImage=prog[1])
-        li.setInfo('music', {'date': prog[3]})
+        li.setInfo('music', {'date': prog[3], 'count': idx})
         xbmcplugin.addDirectoryItem(handle=addon_handle,
                                     url=url,
                                     listitem=li,
@@ -52,7 +52,7 @@ elif mode[0] == 'epList':
 
     episodi, nextpage, img = deejay.get_episodi(url=lastReloadedUrl,
         oldimg=fanArt)
-    for ep in episodi:
+    for idx, ep in episodi:
         #('http://www.deejay.it/audio/20071120-2/278354/', '20071120', 'Puntata del 20 Novembre 2007')
         url = build_url({'mode': 'play',
                          'epUrl': ep[0],
@@ -67,7 +67,7 @@ elif mode[0] == 'epList':
         #li.setArt({'fanart' : img})
         li.setProperty('fanart_image', img)
         
-        li.setInfo('music', {'date': ep[1]})
+        li.setInfo('music', {'date': ep[1], 'count': idx})
         xbmcplugin.addDirectoryItem(handle=addon_handle,
                                     url=url,
                                     listitem=li)
