@@ -32,21 +32,29 @@ def build_url(query):
 mode = args.get('mode', None)
 
 if mode is None:
-    for idx, prog in enumerate(deejay.get_reloaded_list()):
-        url = build_url({'mode': 'epList',
-                         'progName': prog[0],
-                         'lastReloadedUrl': prog[2],
-                         'showThumb': prog[1],
-                         'fanArt': ['']})
-        #showThumbm, parsata da PROGRAMMI, deve essere usata da play -> inoltrata attraverso i modi
-        li = xbmcgui.ListItem(prog[0], iconImage=prog[1])
-        li.setInfo('music', {'date': prog[3], 'count': idx})
-        xbmcplugin.addDirectoryItem(handle=addon_handle,
-                                    url=url,
-                                    listitem=li,
-                                    isFolder=True)
-
-    xbmcplugin.endOfDirectory(addon_handle)
+    try:
+        lista = deejay.get_reloaded_list()
+    except IOError as e:    #urllib2 errors are a subclass of IOError
+        xbmcgui.Dialog().ok(
+            __language__(30002),
+            __language__(30003),
+            str(e.reason))
+    else:
+        lista = deejay.get_reloaded_list()
+        for idx, prog in enumerate(lista):
+            url = build_url({'mode': 'epList',
+                             'progName': prog[0],
+                             'lastReloadedUrl': prog[2],
+                             'showThumb': prog[1],
+                             'fanArt': ['']})
+            #showThumbm, parsata da PROGRAMMI, deve essere usata da play -> inoltrata attraverso i modi
+            li = xbmcgui.ListItem(prog[0], iconImage=prog[1])
+            li.setInfo('music', {'date': prog[3], 'count': idx})
+            xbmcplugin.addDirectoryItem(handle=addon_handle,
+                                        url=url,
+                                        listitem=li,
+                                        isFolder=True)
+        xbmcplugin.endOfDirectory(addon_handle)
 
 elif mode[0] == 'epList':
     progName = args['progName'][0]
@@ -54,50 +62,64 @@ elif mode[0] == 'epList':
     showThumb = args['showThumb'][0]
     fanArt = args['fanArt'][0]
 
-    episodi, nextpage, img = deejay.get_episodi(url=lastReloadedUrl,
-        oldimg=fanArt)
-    for idx, ep in enumerate(episodi):
-        #('http://www.deejay.it/audio/20071120-2/278354/', '20071120', 'Puntata del 20 Novembre 2007')
-        url = build_url({'mode': 'play',
-                         'epUrl': ep[0],
-                         'showThumb': showThumb,
-                         'title': ep[2],
-                         'progName': progName})
-        li = xbmcgui.ListItem(ep[2],
-                              iconImage='DefaultAudio.png')
-        li.setProperty('IsPlayable', 'true')
-        #Setting fanArt
-        #not using setArt to keep Frodo's compatibility
-        #li.setArt({'fanart' : img})
-        li.setProperty('fanart_image', img)
-        
-        li.setInfo('music', {'date': ep[1], 'count': idx})
-        xbmcplugin.addDirectoryItem(handle=addon_handle,
-                                    url=url,
-                                    listitem=li)
+    try:
+        episodi, nextpage, img = deejay.get_episodi(url=lastReloadedUrl,
+            oldimg=fanArt)
+    except IOError as e:    #urllib2 errors are a subclass of IOError
+        xbmcgui.Dialog().ok(
+            __language__(30002),
+            __language__(30004),
+            str(e.reason))
+    else:
+        for idx, ep in enumerate(episodi):
+            #('http://www.deejay.it/audio/20071120-2/278354/', '20071120', 'Puntata del 20 Novembre 2007')
+            url = build_url({'mode': 'play',
+                             'epUrl': ep[0],
+                             'showThumb': showThumb,
+                             'title': ep[2],
+                             'progName': progName})
+            li = xbmcgui.ListItem(ep[2],
+                                  iconImage='DefaultAudio.png')
+            li.setProperty('IsPlayable', 'true')
+            #Setting fanArt
+            #not using setArt to keep Frodo's compatibility
+            #li.setArt({'fanart' : img})
+            li.setProperty('fanart_image', img)
+            
+            li.setInfo('music', {'date': ep[1], 'count': idx})
+            xbmcplugin.addDirectoryItem(handle=addon_handle,
+                                        url=url,
+                                        listitem=li)
 
-    if nextpage:
-        #Questo aggiunge la prossima pagina
-        url = build_url({'mode': 'epList',
-                         'progName': progName,
-                         'lastReloadedUrl': nextpage,
-                         'showThumb': showThumb,
-                         'fanArt': img})
-        li = xbmcgui.ListItem('>>> '+__language__(30001)+' >>>')
-        xbmcplugin.addDirectoryItem(handle=addon_handle,
-                                    url=url,
-                                    listitem=li,
-                                    isFolder=True)
+        if nextpage:
+            #Questo aggiunge la prossima pagina
+            url = build_url({'mode': 'epList',
+                             'progName': progName,
+                             'lastReloadedUrl': nextpage,
+                             'showThumb': showThumb,
+                             'fanArt': img})
+            li = xbmcgui.ListItem('>>> '+__language__(30001)+' >>>')
+            xbmcplugin.addDirectoryItem(handle=addon_handle,
+                                        url=url,
+                                        listitem=li,
+                                        isFolder=True)
 
-    # e chiudiamo la lista
-    xbmcplugin.endOfDirectory(addon_handle)
+        # e chiudiamo la lista
+        xbmcplugin.endOfDirectory(addon_handle)
 
 elif mode[0] == 'play':
-    url = deejay.get_epfile(args['epUrl'][0])
-    item = xbmcgui.ListItem(path=url)
-    item.setThumbnailImage(args['showThumb'][0])
-    item.setInfo('music', {'title': args['title'][0],
-                           'album': args['progName'][0],
-                           'artist': 'Radio Deejay'})
-    xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
-    xbmcplugin.endOfDirectory(addon_handle)
+    try:
+        url = deejay.get_epfile(args['epUrl'][0])
+    except IOError as e:    #urllib2 errors are a subclass of IOError
+        xbmcgui.Dialog().ok(
+            __language__(30002),
+            __language__(30005),
+            str(e.reason))
+    else:
+        item = xbmcgui.ListItem(path=url)
+        item.setThumbnailImage(args['showThumb'][0])
+        item.setInfo('music', {'title': args['title'][0],
+                               'album': args['progName'][0],
+                               'artist': 'Radio Deejay'})
+        xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+        xbmcplugin.endOfDirectory(addon_handle)
