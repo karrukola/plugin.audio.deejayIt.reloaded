@@ -22,6 +22,8 @@ xbmcplugin.addSortMethod(addon_handle,
 xbmcplugin.addSortMethod(addon_handle,
     sortMethod=xbmcplugin.SORT_METHOD_DATE)
 xbmcplugin.addSortMethod(addon_handle,
+    sortMethod=xbmcplugin.SORT_METHOD_LABEL)
+xbmcplugin.addSortMethod(addon_handle,
     sortMethod=xbmcplugin.SORT_METHOD_PROGRAM_COUNT)
 
 
