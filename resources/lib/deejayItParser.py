@@ -1,7 +1,7 @@
 import re
 import urllib2
 from lxml import etree as ET
-import dateUtils
+import date_utils
 import datetime
 
 NOW = datetime.datetime.now()
@@ -15,7 +15,7 @@ def translatedate(eptitle):
         eptitle,
         re.MULTILINE)
     if hit:
-        mese = dateUtils.monthToNum(hit[0][2])
+        mese = dateUtils.month_to_num(hit[0][2])
         giorno = hit[0][1]
         if hit[0][3]:
             anno = hit[0][3]
