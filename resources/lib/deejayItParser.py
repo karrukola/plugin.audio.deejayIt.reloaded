@@ -15,7 +15,7 @@ def translatedate(eptitle):
         eptitle,
         re.MULTILINE)
     if hit:
-        mese = dateUtils.month_to_num(hit[0][2])
+        mese = date_utils.month_to_num(hit[0][2])
         giorno = hit[0][1]
         if hit[0][3]:
             anno = hit[0][3]
