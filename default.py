@@ -61,7 +61,6 @@ elif mode[0] == 'epList':
     lastReloadedUrl = args['lastReloadedUrl'][0]
     showThumb = args['showThumb'][0]
     fanArt = args.get('fanArt')
-    
     try:
         episodi, nextpage, img = deejay.get_episodi(url=lastReloadedUrl,
             oldimg=fanArt)
@@ -84,7 +83,7 @@ elif mode[0] == 'epList':
             #Setting fanArt
             #not using setArt to keep Frodo's compatibility
             #li.setArt({'fanart' : img})
-            li.setProperty('fanart_image', img)        
+            li.setProperty('fanart_image', img)
             li.setInfo('music', {'date': ep[1], 'count': idx})
             xbmcplugin.addDirectoryItem(handle=addon_handle,
                                         url=url,
