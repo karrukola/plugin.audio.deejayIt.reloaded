@@ -30,26 +30,37 @@ def translatedate(eptitle):
             dataep = str(int(dataep[0:4])-1) + dataep[4:]
         translateddate = dataep[6:8]+'.'+dataep[4:6]+'.'+dataep[0:4]
     else:
-        translateddate = '19.12.1982' #I intervento del Gerry Scotti speaker
+        translateddate = '19.12.1982'
+        #19 dicembre 1982: primo intervento del Gerry Scotti speaker
     return translateddate
 
-def get_reloaded_list_in_page(url, response):
-#  This returns an array of tuples containing:
-#  (Program name,
-#  Thumbnail URL,
-#  Last episode,
-#  Date)
-#   ('Deejay chiama Italia',
-#     'http://www.deejay.it/wp-content/uploads/2013/05/DJCI-150x150.jpg',
-#     'http://www.deejay.it/audio/20141212-4/412626/',
-#     '20141212')
-# from a single page of the website
+def get_reloaded_list_in_page(url, reloaded_list):
+    """
+    Return all the available reloaded shows from a single webpage.
+    The list is appended to an array of tuples carrying:
+    (Program name,
+        Thumbnail URL,
+        Last episode,
+        Date)
+    - Input
+    -- url of the webpage, e.g.:
+    http://www.deejay.it/schede-reloaded/page/2/?section=radio
+    -- reloaded_list, an array of tuples carrying the list of shows returned by
+    another parsing operation
+    - Output
+    -- The above-mentioned array of tuples.
+    Single element example:
+    ('Deejay chiama Italia',
+        http://www.deejay.it/wp-content/uploads/2013/05/DJCI-150x150.jpg',
+        'http://www.deejay.it/audio/20141212-4/412626/',
+        '19.12.1982')
+    """
 
     root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
     prog_list = root.xpath(".//ul[@class='block-grid four-up mobile-two-up']/li")
     for prog in prog_list:
         prog_name_url = prog.xpath("./a")[0].attrib
-        response.append(
+        reloaded_list.append(
             (prog_name_url['title'],
                 prog.xpath("./a/img")[0].attrib['src'],
                 prog_name_url['href'],
@@ -61,26 +72,33 @@ def get_reloaded_list_in_page(url, response):
     else:
         nextpageurl = nextpage[0].attrib['href']
 
-    return response, nextpageurl
+    return reloaded_list, nextpageurl
 
 
 def get_reloaded_list():
-#  This crawls over all the pages to return the complete list of reloaded shows
-#  This returns an array of tuples containing:
-#  (Program name,
-#  Thumbnail URL,
-#  Last episode,
-#  Date)
-#   ('Deejay chiama Italia',
-#     'http://www.deejay.it/wp-content/uploads/2013/05/DJCI-150x150.jpg',
-#     'http://www.deejay.it/audio/20141212-4/412626/',
-#     '20141212')
-
+    """
+    Crawl over all the pages to return the complete list of reloaded shows.
+    This returns an array of tuples containing the following info for all the
+    reloaded shows:
+    (Program name,
+        Thumbnail URL,
+        Last episode,
+        Date)
+    - Input:
+    -- None
+    - Output
+    -- The above-mentioned array
+    E.g.:
+    ('Deejay chiama Italia',
+        'http://www.deejay.it/wp-content/uploads/2013/05/DJCI-150x150.jpg',
+        'http://www.deejay.it/audio/20141212-4/412626/',
+        '12.12.2014')
+    """
+    #hardcoded url
     url = "http://www.deejay.it/reloaded/radio/"
     lista, nextpageurl = get_reloaded_list_in_page(url, [])
     while nextpageurl:
         lista, nextpageurl = get_reloaded_list_in_page(nextpageurl, lista)
-
     return lista
 
 def get_episodi(url, oldimg):
