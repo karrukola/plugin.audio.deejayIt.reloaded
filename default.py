@@ -46,8 +46,7 @@ if mode is None:
             url = build_url({'mode': 'epList',
                              'progName': prog[0],
                              'lastReloadedUrl': prog[2],
-                             'showThumb': prog[1],
-                             'fanArt': ['']})
+                             'showThumb': prog[1]})
             #showThumbm, parsata da PROGRAMMI, deve essere usata da play -> inoltrata attraverso i modi
             li = xbmcgui.ListItem(prog[0], iconImage=prog[1])
             li.setInfo('music', {'date': prog[3], 'count': idx})
@@ -61,8 +60,8 @@ elif mode[0] == 'epList':
     progName = args['progName'][0]
     lastReloadedUrl = args['lastReloadedUrl'][0]
     showThumb = args['showThumb'][0]
-    fanArt = args['fanArt'][0]
-
+    fanArt = args.get('fanArt')
+    
     try:
         episodi, nextpage, img = deejay.get_episodi(url=lastReloadedUrl,
             oldimg=fanArt)
@@ -85,8 +84,7 @@ elif mode[0] == 'epList':
             #Setting fanArt
             #not using setArt to keep Frodo's compatibility
             #li.setArt({'fanart' : img})
-            li.setProperty('fanart_image', img)
-            
+            li.setProperty('fanart_image', img)        
             li.setInfo('music', {'date': ep[1], 'count': idx})
             xbmcplugin.addDirectoryItem(handle=addon_handle,
                                         url=url,

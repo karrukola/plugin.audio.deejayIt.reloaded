@@ -85,9 +85,8 @@ def get_reloaded_list():
 
 def get_episodi(url, oldimg):
     root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
-
-    if oldimg:
-        img = oldimg
+    if oldimg is not None:
+        img = oldimg[0]
     else:
         snippet = root.xpath(".//article[@class='twelve columns video player audio']/script")
         if snippet:
