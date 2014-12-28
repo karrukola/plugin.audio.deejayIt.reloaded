@@ -36,12 +36,13 @@ mode = args.get('mode', None)
 if mode is None:
     try:
         lista = deejay.get_reloaded_list()
-    except IOError or BadStatusLine as e:    #urllib2 errors are a subclass of IOError
+    except IOError as e:    #urllib2 errors are a subclass of IOError
         xbmcgui.Dialog().ok(
             __language__(30002),
             __language__(30003),
             str(e.reason))
     else:
+        lista = deejay.get_reloaded_list()
         for idx, prog in enumerate(lista):
             url = build_url({'mode': 'epList',
                              'progName': prog[0],
@@ -65,7 +66,7 @@ elif mode[0] == 'epList':
     try:
         episodi, nextpage, img = deejay.get_episodi(url=lastReloadedUrl,
             oldimg=fanArt)
-    except IOError or BadStatusLine as e:    #urllib2 errors are a subclass of IOError
+    except IOError as e:    #urllib2 errors are a subclass of IOError
         xbmcgui.Dialog().ok(
             __language__(30002),
             __language__(30004),
@@ -109,7 +110,7 @@ elif mode[0] == 'epList':
 elif mode[0] == 'play':
     try:
         url = deejay.get_epfile(args['epUrl'][0])
-    except IOError or BadStatusLine as e:    #urllib2 errors are a subclass of IOError
+    except IOError as e:    #urllib2 errors are a subclass of IOError
         xbmcgui.Dialog().ok(
             __language__(30002),
             __language__(30005),
