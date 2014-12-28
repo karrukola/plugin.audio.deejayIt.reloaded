@@ -42,7 +42,6 @@ if mode is None:
             __language__(30003),
             str(e.reason))
     else:
-        lista = deejay.get_reloaded_list()
         for idx, prog in enumerate(lista):
             url = build_url({'mode': 'epList',
                              'progName': prog[0],
