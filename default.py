@@ -11,7 +11,7 @@ import urlparse
 
 import xbmcgui
 import xbmcplugin
-import resources.lib.deejayItParser as deejay
+import resources.lib.deejay_it_parser as deejay
 import xbmcaddon
 
 

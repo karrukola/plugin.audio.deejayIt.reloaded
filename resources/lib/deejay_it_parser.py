@@ -1,3 +1,9 @@
+"""
+Kodi (formerly XBMC) addon to bring deejay.it's Reloaded shows on the
+mediacenter.
+This is the parser module that takes care of reading Radio Deejay's website,
+extracting the necessary information and return it to the main module.
+"""
 import re
 import urllib2
 from lxml import etree as ET
@@ -23,8 +29,10 @@ def translatedate(eptitle):
             anno = ANNO
         dataep = str(anno)+str(mese).rjust(2, '0')+giorno.rjust(2, '0')
 
-        #Sometimes the year is not given, this part checks whether the #returned date is in the future and eventually adjusts it.
-        #This works under the hypotesis that the website never returns a date #in the future
+        #Sometimes the year is not given, this part checks whether the
+        #returned date is in the future and eventually adjusts it.
+        #This works under the hypotesis that the website never returns a date
+        #in the future
         today = str(ANNO)+str(MESE).rjust(2, '0')+str(GIORNO).rjust(2, '0')
         if dataep > today:
             dataep = str(int(dataep[0:4])-1) + dataep[4:]
@@ -94,15 +102,36 @@ def get_reloaded_list():
         'http://www.deejay.it/audio/20141212-4/412626/',
         '12.12.2014')
     """
-    #hardcoded url
     url = "http://www.deejay.it/reloaded/radio/"
+    #hardcoded url
     lista, nextpageurl = get_reloaded_list_in_page(url, [])
     while nextpageurl:
         lista, nextpageurl = get_reloaded_list_in_page(nextpageurl, lista)
     return lista
 
 def get_episodi(url, oldimg):
+    """
+    Return all the available episodes of the selected reloaed show. A single
+    webpage is parsed.
+    Input
+        url is the site's page that lists all the available episodes. E.g.:
+        i) http://www.deejay.it/audio/20141215-10/412901/ or
+        ii) http://www.deejay.it/audio/page/13/?reloaded=dee-giallo
+        oldimg is a string carrying the path of the picture to be used as
+        fanArt. This must be extracted from type i) pages and passed when
+        parsing type ii) pages from which you can't retrieve such info.
+    Output
+    lista_episodi an array of tuples carrying the episode's details:
+    (link to the webpage where you play the episode to be used by get_epfile(),
+        Date,
+        Episode's title)
+    nextpageurl is the URL of the next page listing the older episodes of the
+    show, if any.
+    img, that is the fanArt URL to be used for every episode of the Reloaded.
+    """
     root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
+    #If the fanArt URL is already know there is no need to re-extract it since
+    #it is a show-wise property and not episode-specific.
     if oldimg is not None:
         img = oldimg[0]
     else:
@@ -117,6 +146,7 @@ def get_episodi(url, oldimg):
             img = ''
 
     new_url = root.xpath(".//span[@class='small-title']/a")
+    # This is as the user pressed on Archivio+
     if new_url:
         root = ET.parse(urllib2.urlopen(new_url[0].attrib['href']),
             ET.HTMLParser()).getroot()
@@ -141,6 +171,18 @@ def get_episodi(url, oldimg):
     return lista_episodi, nextpageurl, img
 
 def get_epfile(url):
+    """
+    Return the file (mp3) URL to be read from the website to play the selected
+    reloaded episode.
+    Input
+        the webpage URL of the episode to be played.
+        E.g.: http://www.deejay.it/audio/20130526-4/269989/
+    Output
+        the URL of the mp3 (rarely a wma) file to be played to listen to the
+        selected episode. E.g.:
+        http://flv.kataweb.it/deejay/audio/dee_giallo/deegiallolosmemoratodicollegno.mp3
+        Returns an empty string if the file cannot be found.
+    """
     root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
     fileurl = root.xpath(".//div[@id='playerCont']/p")
     if not fileurl:
