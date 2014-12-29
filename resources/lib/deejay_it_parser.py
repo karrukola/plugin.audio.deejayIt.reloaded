@@ -15,10 +15,21 @@ ANNO = NOW.year
 MESE = NOW.month
 GIORNO = NOW.day
 
-def translatedate(eptitle):
-    #eptitle is, normally, Puntata del 3 Gennaio 2014
+def translate_date(ep_title):
+    """
+    Translate the date in the episode's title and return it in the format used
+    by Kodi.
+    Input
+        ep_title is the episode's title, such as Puntata del 3 Gennaio 2014.
+        But it could also be Puntata del 3 Gennaio
+    Output
+        translated_date formatted as dd.mm.YYYY
+    Fallback, in case the title is not understood, is 19.12.1982. This should be
+    the first day on which a DJ, Gerry Scotty in this case, was speaking.
+    """
+    #ep_title is, normally, Puntata del 3 Gennaio 2014
     hit = re.findall("(Puntata*)*([0-9]{1,2}) (\S*)\s*([0-9]{4})*",
-        eptitle,
+        ep_title,
         re.MULTILINE)
     if hit:
         mese = date_utils.month_to_num(hit[0][2])
@@ -27,20 +38,19 @@ def translatedate(eptitle):
             anno = hit[0][3]
         else:
             anno = ANNO
-        dataep = str(anno)+str(mese).rjust(2, '0')+giorno.rjust(2, '0')
-
-        #Sometimes the year is not given, this part checks whether the
-        #returned date is in the future and eventually adjusts it.
+        data_ep = str(anno)+str(mese).rjust(2, '0')+giorno.rjust(2, '0')
+        #Sometimes the year is not given, this part checks whether the returned
+        #date is in the future and eventually adjusts it.
         #This works under the hypotesis that the website never returns a date
         #in the future
         today = str(ANNO)+str(MESE).rjust(2, '0')+str(GIORNO).rjust(2, '0')
-        if dataep > today:
-            dataep = str(int(dataep[0:4])-1) + dataep[4:]
-        translateddate = dataep[6:8]+'.'+dataep[4:6]+'.'+dataep[0:4]
+        if data_ep > today:
+            data_ep = str(int(data_ep[0:4])-1) + data_ep[4:]
+        translated_date = data_ep[6:8]+'.'+data_ep[4:6]+'.'+data_ep[0:4]
     else:
-        translateddate = '19.12.1982'
         #19 dicembre 1982: primo intervento del Gerry Scotti speaker
-    return translateddate
+        translated_date = '19.12.1982'
+    return translated_date
 
 def get_reloaded_list_in_page(url, reloaded_list):
     """
@@ -50,13 +60,13 @@ def get_reloaded_list_in_page(url, reloaded_list):
         Thumbnail URL,
         Last episode,
         Date)
-    - Input
-    -- url of the webpage, e.g.:
-    http://www.deejay.it/schede-reloaded/page/2/?section=radio
-    -- reloaded_list, an array of tuples carrying the list of shows returned by
-    another parsing operation
-    - Output
-    -- The above-mentioned array of tuples.
+    Input
+        url of the webpage, e.g.:
+        http://www.deejay.it/schede-reloaded/page/2/?section=radio
+        reloaded_list, an array of tuples carrying the list of shows returned by
+        another parsing operation
+    Output
+        The above-mentioned array of tuples.
     Single element example:
     ('Deejay chiama Italia',
         http://www.deejay.it/wp-content/uploads/2013/05/DJCI-150x150.jpg',
@@ -72,7 +82,7 @@ def get_reloaded_list_in_page(url, reloaded_list):
             (prog_name_url['title'],
                 prog.xpath("./a/img")[0].attrib['src'],
                 prog_name_url['href'],
-                translatedate(prog.xpath("./hgroup/span")[0].text))
+                translate_date(prog.xpath("./hgroup/span")[0].text))
             )
     nextpage = root.xpath(".//a[@class='nextpostslink']")
     if not nextpage:
@@ -92,10 +102,10 @@ def get_reloaded_list():
         Thumbnail URL,
         Last episode,
         Date)
-    - Input:
-    -- None
-    - Output
-    -- The above-mentioned array
+    Input:
+        None
+    Output
+        The above-mentioned array
     E.g.:
     ('Deejay chiama Italia',
         'http://www.deejay.it/wp-content/uploads/2013/05/DJCI-150x150.jpg',
@@ -158,7 +168,7 @@ def get_episodi(url, oldimg):
             lista_episodi.append(
                 (
                     episodio.attrib['href'],
-                    translatedate(episodio.attrib['title']),
+                    translate_date(episodio.attrib['title']),
                     episodio.attrib['title'])
                 )
 
@@ -199,7 +209,7 @@ def get_epfile(url):
 #p = PROGRAMMI[17][2]
 #print p
 
-#eps = get_episodi('http://www.deejay.it/audio/page/13/?reloaded=dee-giallo', '')
+#eps = get_episodi('http://www.deejay.it/audio/page/13/?reloaded=dee-giallo','')
 #eps = get_episodi('http://www.deejay.it/audio/20141215-10/412901/','')
 #eps = get_episodi('http://www.deejay.it/audio/20141223-2/414155/', 'pippo')
 #for e in eps:
@@ -208,5 +218,5 @@ def get_epfile(url):
 #fileurl = get_epfile('http://www.deejay.it/audio/20130527-3/269977/')
 #print fileurl
 
-#dataAstrale = translatedate('15 Dicembre')
+#dataAstrale = translate_date('15 Dicembre')
 #print dataAstrale
