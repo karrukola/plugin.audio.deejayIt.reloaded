@@ -52,6 +52,7 @@ def translate_date(ep_title):
         translated_date = '19.12.1982'
     return translated_date
 
+
 def get_reloaded_list_in_page(url, reloaded_list):
     """
     Return all the available reloaded shows from a single webpage.
@@ -73,7 +74,6 @@ def get_reloaded_list_in_page(url, reloaded_list):
         'http://www.deejay.it/audio/20141212-4/412626/',
         '19.12.1982')
     """
-
     root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
     prog_list = root.xpath(".//ul[@class='block-grid four-up mobile-two-up']/li")
     for prog in prog_list:
@@ -118,6 +118,7 @@ def get_reloaded_list():
     while nextpageurl:
         lista, nextpageurl = get_reloaded_list_in_page(nextpageurl, lista)
     return lista
+
 
 def get_episodi(url, oldimg):
     """

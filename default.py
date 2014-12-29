@@ -8,10 +8,9 @@ URL of the media content to the player.
 import sys
 import urllib
 import urlparse
-
+import resources.lib.deejay_it_parser as deejay
 import xbmcgui
 import xbmcplugin
-import resources.lib.deejay_it_parser as deejay
 import xbmcaddon
 
 
@@ -22,7 +21,6 @@ __language__ = __settings__.getLocalizedString
 BASE_URL = sys.argv[0]
 ADDON_HANDLE = int(sys.argv[1])
 ARGS = urlparse.parse_qs(sys.argv[2][1:])
-
 xbmcplugin.setContent(ADDON_HANDLE, 'episodes')
 xbmcplugin.addSortMethod(ADDON_HANDLE,
     sortMethod=xbmcplugin.SORT_METHOD_UNSORTED)
@@ -66,8 +64,6 @@ if MODE is None:
                                         url=url,
                                         listitem=li,
                                         isFolder=True)
-        xbmcplugin.endOfDirectory(ADDON_HANDLE)
-
 elif MODE[0] == 'epList':
     PROG_NAME = ARGS['progName'][0]
     LAST_RELOADED_URL = ARGS['lastReloadedUrl'][0]
@@ -103,7 +99,6 @@ elif MODE[0] == 'epList':
             xbmcplugin.addDirectoryItem(handle=ADDON_HANDLE,
                                         url=URL,
                                         listitem=LI)
-
         if NEXTPAGE:
             #Questo aggiunge la prossima pagina
             URL = build_url({'mode': 'epList',
@@ -116,9 +111,6 @@ elif MODE[0] == 'epList':
                                         url=URL,
                                         listitem=LI,
                                         isFolder=True)
-
-        # e chiudiamo la lista
-        xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
 elif MODE[0] == 'play':
     try:
@@ -136,4 +128,5 @@ elif MODE[0] == 'play':
                                'album': ARGS['progName'][0],
                                'artist': 'Radio Deejay'})
         xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, LI)
-        xbmcplugin.endOfDirectory(ADDON_HANDLE)
+# e chiudiamo la lista per tutti i modi
+xbmcplugin.endOfDirectory(ADDON_HANDLE)
