@@ -7,13 +7,38 @@ extracting the necessary information and return it to the main module.
 import re
 import urllib2
 from lxml import etree as ET
-import date_utils
 import datetime
 
 NOW = datetime.datetime.now()
 ANNO = NOW.year
 MESE = NOW.month
 GIORNO = NOW.day
+
+def month_to_num(date):
+    """
+    Translate the month name (string) to its corresponding number.
+    Strings are written only in Italian since this module is used to parse
+    Radio Deejay's website (www.deejay.it).
+    Input
+        The month name, epxressed in Italian, e.g. Dicembre
+    Output
+        The corresponding month number, e.g. 12
+    """
+    return{
+    'Gennaio' : 1,
+    'Febbraio' : 2,
+    'Marzo' : 3,
+    'Aprile' : 4,
+    'Maggio' : 5,
+    'Giugno' : 6,
+    'Luglio' : 7,
+    'Agosto' : 8,
+    'Settembre' : 9,
+    'Ottobre' : 10,
+    'Novembre' : 11,
+    'Dicembre' : 12
+    }[date]
+
 
 def translate_date(ep_title):
     """
@@ -24,15 +49,15 @@ def translate_date(ep_title):
         But it could also be Puntata del 3 Gennaio
     Output
         translated_date formatted as dd.mm.YYYY
-    Fallback, in case the title is not understood, is 19.12.1982. This should be
-    the first day on which a DJ, Gerry Scotty in this case, was speaking.
+    Fallback, in case the title is not understood, is 19.12.1982. This should
+    be the first day on which a DJ, Gerry Scotty in this case, was speaking.
     """
     #ep_title is, normally, Puntata del 3 Gennaio 2014
-    hit = re.findall("(Puntata*)*([0-9]{1,2}) (\S*)\s*([0-9]{4})*",
+    hit = re.findall(r"(Puntata*)*([0-9]{1,2}) (\S*)\s*([0-9]{4})*",
         ep_title,
         re.MULTILINE)
     if hit:
-        mese = date_utils.month_to_num(hit[0][2])
+        mese = month_to_num(hit[0][2])
         giorno = hit[0][1]
         if hit[0][3]:
             anno = hit[0][3]
@@ -50,6 +75,7 @@ def translate_date(ep_title):
     else:
         #19 dicembre 1982: primo intervento del Gerry Scotti speaker
         translated_date = '19.12.1982'
+        print "no hit"
     return translated_date
 
 
@@ -64,8 +90,8 @@ def get_reloaded_list_in_page(url, reloaded_list):
     Input
         url of the webpage, e.g.:
         http://www.deejay.it/schede-reloaded/page/2/?section=radio
-        reloaded_list, an array of tuples carrying the list of shows returned by
-        another parsing operation
+        reloaded_list, an array of tuples carrying the list of shows returned
+        by another parsing operation
     Output
         The above-mentioned array of tuples.
     Single element example:
@@ -75,7 +101,8 @@ def get_reloaded_list_in_page(url, reloaded_list):
         '19.12.1982')
     """
     root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
-    prog_list = root.xpath(".//ul[@class='block-grid four-up mobile-two-up']/li")
+    prog_list = root.xpath(".//ul[@class='block-grid four-up mobile-two-up']/"
+        "li")
     for prog in prog_list:
         prog_name_url = prog.xpath("./a")[0].attrib
         reloaded_list.append(
@@ -146,9 +173,11 @@ def get_episodi(url, oldimg):
     if oldimg is not None:
         img = oldimg[0]
     else:
-        snippet = root.xpath(".//article[@class='twelve columns video player audio']/script")
+        snippet = root.xpath(".//"
+            "article[@class='twelve columns video player audio']/script")
         if snippet:
-            new_img = re.findall(".*addParam.*'param', 'image', '(http://www.deejay.it/.*)'.*",
+            new_img = re.findall(".*addParam.*'param', "
+            "'image', '(http://www.deejay.it/.*)'.*",
                 snippet[0].text,
                 re.MULTILINE)
             if new_img:
