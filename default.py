@@ -1,6 +1,6 @@
 """
-Kodi (formerly XBMC) addon to bring deejay.it's Reloaded shows on the
-mediacenter.
+Main module of Kodi (XBMC) addon to manage deejay.it's Reloaded shows.
+
 This is the main module that takes care of receiving the information from the
 parser and present it in Kodi creating the appropriate pages and feeding the
 URL of the media content to the player.

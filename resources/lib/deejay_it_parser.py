@@ -1,6 +1,6 @@
 """
-Kodi (formerly XBMC) addon to bring deejay.it's Reloaded shows on the
-mediacenter.
+Parser of Kodi (XBMC) addon to manage deejay.it's Reloaded shows.
+
 This is the parser module that takes care of reading Radio Deejay's website,
 extracting the necessary information and return it to the main module.
 """
