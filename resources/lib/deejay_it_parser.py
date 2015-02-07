@@ -6,7 +6,6 @@ extracting the necessary information and return it to the main module.
 """
 import re
 import urllib2
-from lxml import etree as ET
 from BeautifulSoup import BeautifulSoup
 import datetime
 
@@ -225,13 +224,14 @@ def get_epfile(url):
         http://flv.kataweb.it/deejay/audio/dee_giallo/deegiallolosmemoratodicollegno.mp3
         Returns an empty string if the file cannot be found.
     """
-    root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
-    fileurl = root.xpath(".//div[@id='playerCont']/p")
+    soup = BeautifulSoup(urllib2.urlopen(url))
+    fileurl = soup.find('div', {'id': 'playerCont'})
+
     if not fileurl:
         return ''
     else:
         hit = re.findall("file=(.*.mp3)&",
-            fileurl[0].attrib['src'])
+            fileurl.iframe['src'])
         if not hit:
             return ''
         else:
