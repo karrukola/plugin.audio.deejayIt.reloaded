@@ -7,6 +7,7 @@ extracting the necessary information and return it to the main module.
 import re
 import urllib2
 from lxml import etree as ET
+from BeautifulSoup import BeautifulSoup
 import datetime
 
 NOW = datetime.datetime.now()
@@ -100,22 +101,22 @@ def get_reloaded_list_in_page(url, reloaded_list):
         'http://www.deejay.it/audio/20141212-4/412626/',
         '19.12.1982')
     """
-    root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
-    prog_list = root.xpath(".//ul[@class='block-grid four-up mobile-two-up']/"
-        "li")
+
+    soup = BeautifulSoup(urllib2.urlopen(url))
+    prog_list = soup.find('ul', {'class': 'block-grid four-up mobile-two-up'}).findAll('li')
     for prog in prog_list:
-        prog_name_url = prog.xpath("./a")[0].attrib
+        prog_name_url = prog.a
         reloaded_list.append(
             (prog_name_url['title'],
-                prog.xpath("./a/img")[0].attrib['src'],
+                prog.img['src'],
                 prog_name_url['href'],
-                translate_date(prog.xpath("./hgroup/span")[0].text))
+                translate_date(prog.hgroup.span.string))
             )
-    nextpage = root.xpath(".//a[@class='nextpostslink']")
+    nextpage = soup.find('a', {'class': 'nextpostslink'})
     if not nextpage:
         nextpageurl = ''
     else:
-        nextpageurl = nextpage[0].attrib['href']
+        nextpageurl = nextpage['href']
 
     return reloaded_list, nextpageurl
 
