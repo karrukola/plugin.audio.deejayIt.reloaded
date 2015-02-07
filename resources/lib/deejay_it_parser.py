@@ -173,17 +173,18 @@ def get_episodi(url, oldimg):
     if oldimg is not None:
         img = oldimg[0]
     else:
-        snippet = root.xpath(".//"
-            "article[@class='twelve columns video player audio']/script")
-        if snippet:
-            new_img = re.findall(".*addParam.*'param', "
-            "'image', '(http://www.deejay.it/.*)'.*",
-                snippet[0].text,
-                re.MULTILINE)
-            if new_img:
-                img = new_img[0]
+        player = root.findall(".//div[@id='playerCont']/iframe")
+        if not player:
+            return ''
         else:
-            img = ''
+            hit = re.findall("image=(.*.jpg)",
+                player[0].attrib['src'])
+            if not hit:
+                return ''
+            else:
+                print "immagine trovata:"
+                print hit[0]
+                return hit[0]
 
     new_url = root.xpath(".//span[@class='small-title']/a")
     # This is as the user pressed on Archivio+
@@ -228,7 +229,12 @@ def get_epfile(url):
     if not fileurl:
         return ''
     else:
-        return fileurl[0].text
+        hit = re.findall("file=(.*.mp3)&",
+            fileurl[0].attrib['src'])
+        if not hit:
+            return ''
+        else:
+            return hit[0]
 
 
 #    ---------------------------------------------------
