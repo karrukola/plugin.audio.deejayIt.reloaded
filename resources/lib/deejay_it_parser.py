@@ -8,6 +8,7 @@ import re
 import urllib2
 from BeautifulSoup import BeautifulSoup
 import datetime
+import xbmc
 
 NOW = datetime.datetime.now()
 ANNO = NOW.year
@@ -175,14 +176,17 @@ def get_episodi(url, oldimg):
     else:
         player = soup.find('div', {'id': 'playerCont'})
         if not player:
-            return ''
+            xbmc.log('fanArt: div id playerCont not found', 1)
+            img = None
         else:
             hit = re.findall("image=(.*.jpg)",
                 player.iframe['src'])
             if not hit:
-                return ''
+                xbmc.log('fanArt: regex does not match', 1)
+                img = None
             else:
-                return hit[0]
+                img = hit[0]
+                xbmc.log('fanArt:'+img, 1)
 
     new_url = soup.find('span', {'class': 'small-title'})
     # This is as the user pressed on Archivio+
