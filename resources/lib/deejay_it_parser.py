@@ -77,7 +77,6 @@ def translate_date(ep_title):
     else:
         #19 dicembre 1982: primo intervento del Gerry Scotti speaker
         translated_date = '19.12.1982'
-        print "no hit"
     return translated_date
 
 
