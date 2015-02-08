@@ -15,6 +15,7 @@ ANNO = NOW.year
 MESE = NOW.month
 GIORNO = NOW.day
 
+
 def month_to_num(date):
     """
     Translate the month name (string) to its corresponding number.
@@ -211,6 +212,7 @@ def get_episodi(url, oldimg):
     else:
         nextpageurl = nextpage['href']
     return lista_episodi, nextpageurl, img
+
 
 def get_epfile(url):
     """
