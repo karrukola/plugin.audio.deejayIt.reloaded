@@ -173,28 +173,15 @@ def get_episodi(url, oldimg):
     if oldimg is not None:
         img = oldimg[0]
     else:
-<<<<<<< HEAD
-        player = root.findall(".//div[@id='playerCont']/iframe")
-=======
         player = soup.find('div', {'id': 'playerCont'})
->>>>>>> soup
         if not player:
             return ''
         else:
             hit = re.findall("image=(.*.jpg)",
-<<<<<<< HEAD
-                player[0].attrib['src'])
-            if not hit:
-                return ''
-            else:
-                print "immagine trovata:"
-                print hit[0]
-=======
                 player.iframe['src'])
             if not hit:
                 return ''
             else:
->>>>>>> soup
                 return hit[0]
 
     new_url = soup.find('span', {'class': 'small-title'})
