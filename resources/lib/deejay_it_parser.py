@@ -124,6 +124,8 @@ def get_reloaded_list_in_page(url, reloaded_list):
 def get_reloaded_list():
     """
     Crawl over all the pages to return the complete list of reloaded shows.
+    Include shows that are not available any more from the web interface, such
+    as Dee Giallo.
     This returns an array of tuples containing the following info for all the
     reloaded shows:
     (Program name,
@@ -145,6 +147,14 @@ def get_reloaded_list():
     lista, nextpageurl = get_reloaded_list_in_page(url, [])
     while nextpageurl:
         lista, nextpageurl = get_reloaded_list_in_page(nextpageurl, lista)
+    #Appending Dee Giallo
+    lista.append(
+        ('Dee Giallo',
+            'http://www.deejay.it/wp-content/themes/deejay/images/logo.png',
+            'http://www.deejay.it/audio/20130526-4/269989/',
+            '26.05.2013'
+            )
+        )
     return lista
 
 
