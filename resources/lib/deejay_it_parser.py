@@ -167,48 +167,45 @@ def get_episodi(url, oldimg):
     show, if any.
     img, that is the fanArt URL to be used for every episode of the Reloaded.
     """
-    root = ET.parse(urllib2.urlopen(url), ET.HTMLParser()).getroot()
+    soup = BeautifulSoup(urllib2.urlopen(url))
     #If the fanArt URL is already know there is no need to re-extract it since
     #it is a show-wise property and not episode-specific.
     if oldimg is not None:
         img = oldimg[0]
     else:
-        player = root.findall(".//div[@id='playerCont']/iframe")
+        player = soup.find('div', {'id': 'playerCont'})
         if not player:
             return ''
         else:
             hit = re.findall("image=(.*.jpg)",
-                player[0].attrib['src'])
+                player.iframe['src'])
             if not hit:
                 return ''
             else:
-                print "immagine trovata:"
-                print hit[0]
                 return hit[0]
 
-    new_url = root.xpath(".//span[@class='small-title']/a")
+    new_url = soup.find('span', {'class': 'small-title'})
     # This is as the user pressed on Archivio+
     if new_url:
-        root = ET.parse(urllib2.urlopen(new_url[0].attrib['href']),
-            ET.HTMLParser()).getroot()
+        soup = soup = BeautifulSoup(urllib2.urlopen(new_url.a['href']))
     lista_episodi = []
-    episodi = root.xpath(".//ul[@class='lista']/li/a")
+    episodi = soup.find('ul', {'class': 'lista'}).findAll('li')
 
     if episodi:
         for episodio in episodi:
             lista_episodi.append(
                 (
-                    episodio.attrib['href'],
-                    translate_date(episodio.attrib['title']),
-                    episodio.attrib['title'])
+                    episodio.a['href'],
+                    translate_date(episodio.a['title']),
+                    episodio.a['title'])
                 )
 
     #Passo finale: aggiungi il link alla pagina successiva
-    nextpage = root.xpath(".//a[@class='nextpostslink']")
+    nextpage = soup.find('a', {'class': 'nextpostslink'})
     if not nextpage:
         nextpageurl = ''
     else:
-        nextpageurl = nextpage[0].attrib['href']
+        nextpageurl = nextpage['href']
     return lista_episodi, nextpageurl, img
 
 def get_epfile(url):

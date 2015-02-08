@@ -2,31 +2,43 @@ import re
 import urllib2
 from BeautifulSoup import BeautifulSoup
 
-url = "http://www.deejay.it/audio/20130526-4/269989/"
+url = "http://www.deejay.it/audio/page/13/?reloaded=dee-giallo"
+#url = "http://www.deejay.it/reloaded/radio/"
 page = urllib2.urlopen(url)
 soup = BeautifulSoup(page)
 
-fileurl = soup.find('div', {'id': 'playerCont'})
+episodi = soup.find('ul', {'class': 'lista'}).findAll('li')
 
-print 'fileurl:'
-print fileurl
+episodio = episodi[3]
+print "episodio.a['href']:"
+print episodio.a['href']
+print "episodio.a['title']:"
+print episodio.a['title']
 
-print "fileurl.iframe['src']:"
-print fileurl.iframe['src']
+# for episodio in episodi:
+#     lista_episodi.append(
+#         (
+#             episodio.a['href'],
+#             translate_date(episodio.a['title']),
+#             episodio.a['title'])
+#     #             )
+#             )
 
-hit = re.find("file=(.*.mp3)&",
-    fileurl.iframe['src'])
 
-print 'hit:'
-print hit
+    #episodi = root.xpath(".//ul[@class='lista']/li/a")
+    # if episodi:
+    #     for episodio in episodi:
+    #         lista_episodi.append(
+    #             (
+    #                 episodio.attrib['href'],
+    #                 translate_date(episodio.attrib['title']),
+    #                 episodio.attrib['title'])
+    #             )
 
-
-# if not fileurl:
-#     return ''
-# else:
-#     hit = re.findall("file=(.*.mp3)&",
-#         fileurl[0].attrib['src'])
-#     if not hit:
-#         return ''
-#     else:
-#         return hit[0]
+    # #Passo finale: aggiungi il link alla pagina successiva
+    # nextpage = root.xpath(".//a[@class='nextpostslink']")
+    # if not nextpage:
+    #     nextpageurl = ''
+    # else:
+    #     nextpageurl = nextpage[0].attrib['href']
+    # return lista_episodi, nextpageurl, img
