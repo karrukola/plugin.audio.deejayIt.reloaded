@@ -42,6 +42,21 @@ def build_url(query):
 MODE = ARGS.get('mode', None)
 
 if MODE is None:
+    li = xbmcgui.ListItem('RELOADED')
+    xbmcplugin.addDirectoryItem(
+        handle=ADDON_HANDLE,
+        url=build_url({'mode': 'reloaded'}),
+        listitem=li,
+        isFolder=True
+        )
+    li = xbmcgui.ListItem('PODCAST')
+    xbmcplugin.addDirectoryItem(
+        handle=ADDON_HANDLE,
+        url=build_url({'mode': 'podcast'}),
+        listitem=li,
+        isFolder=True
+        )
+elif MODE[0] == 'reloaded':
     try:
         LISTA = deejay.get_reloaded_list()
     #urllib2 errors are a subclass of IOError
@@ -52,7 +67,7 @@ if MODE is None:
             str(e_urllib2.reason))
     else:
         for idx, prog in enumerate(LISTA):
-            url = build_url({'mode': 'epList',
+            url = build_url({'mode': 'reloadedEpList',
                              'progName': prog[0],
                              'lastReloadedUrl': prog[2],
                              'showThumb': prog[1]})
@@ -64,13 +79,13 @@ if MODE is None:
                                         url=url,
                                         listitem=li,
                                         isFolder=True)
-elif MODE[0] == 'epList':
+elif MODE[0] == 'reloadedEpList':
     PROG_NAME = ARGS['progName'][0]
     LAST_RELOADED_URL = ARGS['lastReloadedUrl'][0]
     SHOW_THUMB = ARGS['showThumb'][0]
     FAN_ART = ARGS.get('fanArt')
     try:
-        EPISODI, NEXTPAGE, IMG = deejay.get_episodi(url=LAST_RELOADED_URL,
+        EPISODI, NEXTPAGE, IMG = deejay.get_episodi_reloaded(url=LAST_RELOADED_URL,
             oldimg=FAN_ART)
     #urllib2 errors are a subclass of IOError
     except IOError as e_urllib2:
@@ -83,7 +98,7 @@ elif MODE[0] == 'epList':
             #('http://www.deejay.it/audio/20071120-2/278354/',
             #   '20071120',
             #   'Puntata del 20 Novembre 2007')
-            URL = build_url({'mode': 'play',
+            URL = build_url({'mode': 'reloadedPlay',
                              'epUrl': ep[0],
                              'showThumb': SHOW_THUMB,
                              'title': ep[2],
@@ -101,7 +116,7 @@ elif MODE[0] == 'epList':
                                         listitem=LI)
         if NEXTPAGE:
             #Questo aggiunge la prossima pagina
-            URL = build_url({'mode': 'epList',
+            URL = build_url({'mode': 'reloadedEpList',
                              'progName': PROG_NAME,
                              'lastReloadedUrl': NEXTPAGE,
                              'showThumb': SHOW_THUMB,
@@ -112,7 +127,7 @@ elif MODE[0] == 'epList':
                                         listitem=LI,
                                         isFolder=True)
 
-elif MODE[0] == 'play':
+elif MODE[0] == 'reloadedPlay':
     try:
         URL = deejay.get_epfile(ARGS['epUrl'][0])
     #urllib2 errors are a subclass of IOError

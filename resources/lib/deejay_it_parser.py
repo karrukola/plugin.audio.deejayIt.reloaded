@@ -158,7 +158,7 @@ def get_reloaded_list():
     return lista
 
 
-def get_episodi(url, oldimg):
+def get_episodi_reloaded(url, oldimg):
     """
     Return all the available episodes of the selected reloaed show. A single
     webpage is parsed.
