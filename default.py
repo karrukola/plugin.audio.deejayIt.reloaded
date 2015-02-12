@@ -98,7 +98,7 @@ elif MODE[0] == 'reloadedEpList':
             #('http://www.deejay.it/audio/20071120-2/278354/',
             #   '20071120',
             #   'Puntata del 20 Novembre 2007')
-            URL = build_url({'mode': 'reloadedPlay',
+            URL = build_url({'mode': 'play',
                              'epUrl': ep[0],
                              'showThumb': SHOW_THUMB,
                              'title': ep[2],
@@ -127,7 +127,7 @@ elif MODE[0] == 'reloadedEpList':
                                         listitem=LI,
                                         isFolder=True)
 
-elif MODE[0] == 'reloadedPlay':
+elif MODE[0] == 'play':
     try:
         URL = deejay.get_epfile(ARGS['epUrl'][0])
     #urllib2 errors are a subclass of IOError
@@ -143,5 +143,40 @@ elif MODE[0] == 'reloadedPlay':
                                'album': ARGS['progName'][0],
                                'artist': 'Radio Deejay'})
         xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, LI)
+
+elif MODE[0] == 'podcast':
+    try:
+        LISTA = deejay.get_podcast_list()
+    #urllib2 errors are a subclass of IOError
+    except IOError as e_urllib2:
+        xbmcgui.Dialog().ok(
+            __language__(30002),
+            __language__(30003),
+            str(e_urllib2.reason))
+    else:
+        for idx, prog in enumerate(LISTA):
+            url = build_url({'mode': 'podcastEpList',
+                             'progName': prog[0],
+                             'lastReloadedUrl': prog[2],
+                             'showThumb': prog[1]})
+            li = xbmcgui.ListItem(prog[0], iconImage=prog[1])
+            li.setInfo('music', {'date': prog[3], 'count': idx})
+            xbmcplugin.addDirectoryItem(handle=ADDON_HANDLE,
+                                        url=url,
+                                        listitem=li,
+                                        isFolder=True)
+            for ep in prog[4]:
+                URL = build_url({'mode': 'play',
+                    'epUrl': ep[1],
+                    'showThumb': prog[1],
+                    'title': ep[0].encode('ascii','ignore'),
+                    'progName': prog[0]})
+                LI = xbmcgui.ListItem(ep[0], iconImage=prog[1])
+                LI.setProperty('IsPlayable', 'true')
+                LI.setInfo('music', {'date': prog[3], 'count': idx})
+                xbmcplugin.addDirectoryItem(handle=ADDON_HANDLE,
+                    url=URL,
+                    listitem=LI)
+
 # e chiudiamo la lista per tutti i modi
 xbmcplugin.endOfDirectory(ADDON_HANDLE)

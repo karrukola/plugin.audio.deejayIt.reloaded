@@ -8,7 +8,7 @@ import re
 import urllib2
 from BeautifulSoup import BeautifulSoup
 import datetime
-import xbmc
+#import xbmc
 
 NOW = datetime.datetime.now()
 ANNO = NOW.year
@@ -158,6 +158,50 @@ def get_reloaded_list():
     return lista
 
 
+def get_podcast_list():
+    """
+    Retrieve the list of podcast from the website
+    This returns an array of tuples containing the following info for all the
+    shows with podcasts:
+        (titolo,
+            pic,
+            indirizzo,
+            dataAstrale,
+            podcast (array))
+    Input:
+        None
+    Output
+        The above-mentioned array
+    E.g.:
+    (TBD)
+    """
+    url = "http://www.deejay.it/podcast/radio/"
+    #hardcoded url
+    soup = BeautifulSoup(urllib2.urlopen(url))
+    podcast_section = soup.find('div', {'class': 'article-list'})
+    if podcast_section:
+        lista = []
+        article_list = podcast_section.findAll('article')
+        for show in article_list:
+            podcast = []
+            episodi = show.findAll('li')
+            for episodio in episodi:
+                podcast.append(
+                    (episodio.find('a')['title'],   #titolo
+                        episodio.find('a')['href']) #indirizzo
+                    )
+            lista.append(
+                (show.find('a')['title'],   #titolo
+                show.find('img')['src'],    #pic
+                show.find('a')['href'],     #indirizzo
+                translate_date(show.find('span', {'class': 'hour'}).text),
+                podcast)                    #array di podcast
+            )
+        return lista
+    else:
+        return None
+
+
 def get_episodi_reloaded(url, oldimg):
     """
     Return all the available episodes of the selected reloaed show. A single
@@ -186,17 +230,17 @@ def get_episodi_reloaded(url, oldimg):
     else:
         player = soup.find('div', {'id': 'playerCont'})
         if not player:
-            xbmc.log('fanArt: div id playerCont not found', 1)
+#            xbmc.log('fanArt: div id playerCont not found', 1)
             img = None
         else:
             hit = re.findall("image=(.*.jpg)",
                 player.iframe['src'])
             if not hit:
-                xbmc.log('fanArt: regex does not match', 1)
+#                xbmc.log('fanArt: regex does not match', 1)
                 img = None
             else:
                 img = hit[0]
-                xbmc.log('fanArt:'+img, 1)
+#                xbmc.log('fanArt:'+img, 1)
 
     new_url = soup.find('span', {'class': 'small-title'})
     # This is as the user pressed on Archivio+
@@ -259,9 +303,10 @@ def get_epfile(url):
 #print p
 
 #eps = get_episodi('http://www.deejay.it/audio/page/13/?reloaded=dee-giallo','')
-#eps = get_episodi('http://www.deejay.it/audio/20141215-10/412901/','')
+#eps = get_episodi('http://www.deejay.it/audio/20141215-10/412901/')
+#eps = get_episodi_reloaded('http://www.deejay.it/audio/poesie-10/418750/', None)
 #eps = get_episodi('http://www.deejay.it/audio/20141223-2/414155/', 'pippo')
-#for e in eps:
+# for e in eps:
 #    print e
 
 #fileurl = get_epfile('http://www.deejay.it/audio/20130527-3/269977/')
@@ -269,3 +314,19 @@ def get_epfile(url):
 
 #dataAstrale = translate_date('15 Dicembre')
 #print dataAstrale
+
+# LISTA = get_podcast_list()
+# prog = LISTA[15]
+
+# for ep in prog:
+#     print ep
+
+# episodi = prog[4]
+# print episodi
+# for ep in episodi:
+#     print 'ep[0]:'
+#     print ep[0]
+#     print ep[0].encode('ascii','ignore')
+#     print 'ep[1]:'
+#     print ep[1]
+#     print ep[0].encode('ascii','ignore')
