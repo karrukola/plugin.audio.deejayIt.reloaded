@@ -79,14 +79,22 @@ elif MODE[0] == 'reloaded':
                                         url=url,
                                         listitem=li,
                                         isFolder=True)
-elif MODE[0] == 'reloadedEpList':
+elif MODE[0] in ('reloadedEpList', 'podcastEpList'):
     PROG_NAME = ARGS['progName'][0]
     LAST_RELOADED_URL = ARGS['lastReloadedUrl'][0]
     SHOW_THUMB = ARGS['showThumb'][0]
     FAN_ART = ARGS.get('fanArt')
     try:
-        EPISODI, NEXTPAGE, IMG = deejay.get_episodi_reloaded(url=LAST_RELOADED_URL,
-            oldimg=FAN_ART)
+        if MODE[0] == 'reloadedEpList':
+            EPISODI, NEXTPAGE, IMG = deejay.get_episodi_reloaded(
+                url=LAST_RELOADED_URL,
+                oldimg=FAN_ART)
+            MODO = 'playReloaded'
+        else:
+            EPISODI, NEXTPAGE, IMG = deejay.get_episodi_podcast(
+                url=LAST_RELOADED_URL,
+                oldimg=FAN_ART)
+            MODO = 'playPodcast'
     #urllib2 errors are a subclass of IOError
     except IOError as e_urllib2:
         xbmcgui.Dialog().ok(
@@ -98,10 +106,10 @@ elif MODE[0] == 'reloadedEpList':
             #('http://www.deejay.it/audio/20071120-2/278354/',
             #   '20071120',
             #   'Puntata del 20 Novembre 2007')
-            URL = build_url({'mode': 'play',
+            URL = build_url({'mode': MODO,
                              'epUrl': ep[0],
                              'showThumb': SHOW_THUMB,
-                             'title': ep[2],
+                             'title': ep[2].encode('ascii', 'ignore'),
                              'progName': PROG_NAME})
             LI = xbmcgui.ListItem(ep[2],
                                   iconImage='DefaultAudio.png')
@@ -127,7 +135,7 @@ elif MODE[0] == 'reloadedEpList':
                                         listitem=LI,
                                         isFolder=True)
 
-elif MODE[0] == 'play':
+elif MODE[0] in ('playReloaded', 'playPodcast'):
     try:
         URL = deejay.get_epfile(ARGS['epUrl'][0])
     #urllib2 errors are a subclass of IOError
@@ -141,7 +149,7 @@ elif MODE[0] == 'play':
         LI.setThumbnailImage(ARGS['showThumb'][0])
         LI.setInfo('music', {'title': ARGS['title'][0],
                                'album': ARGS['progName'][0],
-                               'artist': 'Radio Deejay'})
+                               'artist': 'Deejay '+MODE[0][4:]})
         xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, LI)
 
 elif MODE[0] == 'podcast':
@@ -166,12 +174,12 @@ elif MODE[0] == 'podcast':
                                         listitem=li,
                                         isFolder=True)
             for ep in prog[4]:
-                URL = build_url({'mode': 'play',
+                URL = build_url({'mode': 'playPodcast',
                     'epUrl': ep[1],
                     'showThumb': prog[1],
-                    'title': ep[0].encode('ascii','ignore'),
+                    'title': ep[0].encode('ascii', 'ignore'),
                     'progName': prog[0]})
-                LI = xbmcgui.ListItem(ep[0], iconImage=prog[1])
+                LI = xbmcgui.ListItem('> '+ep[0], iconImage=prog[1])
                 LI.setProperty('IsPlayable', 'true')
                 LI.setInfo('music', {'date': prog[3], 'count': idx})
                 xbmcplugin.addDirectoryItem(handle=ADDON_HANDLE,

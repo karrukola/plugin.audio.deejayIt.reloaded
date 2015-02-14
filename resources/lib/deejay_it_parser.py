@@ -167,7 +167,7 @@ def get_podcast_list():
             pic,
             indirizzo,
             dataAstrale,
-            podcast (array))
+            podcast [array of tuples (titolo, indirizzo)]
     Input:
         None
     Output
@@ -267,6 +267,57 @@ def get_episodi_reloaded(url, oldimg):
     return lista_episodi, nextpageurl, img
 
 
+def get_episodi_podcast(url, oldimg):
+    """
+    """
+    soup = BeautifulSoup(urllib2.urlopen(url))
+    #If the fanArt URL is already know there is no need to re-extract it since
+    #it is a show-wise property and not episode-specific.
+    if oldimg is not None:
+        img = oldimg[0]
+    else:
+        player = soup.find('div', {'id': 'playerCont'})
+        if not player:
+#            xbmc.log('fanArt: div id playerCont not found', 1)
+            img = None
+        else:
+            hit = re.findall("image=(.*.jpg)",
+                player.iframe['src'])
+            if not hit:
+#                xbmc.log('fanArt: regex does not match', 1)
+                img = None
+            else:
+                img = hit[0]
+#                xbmc.log('fanArt:'+img, 1)
+
+    new_url = soup.find('span', {'class': 'small-title'})
+    # This is as the user pressed on Archivio+
+    if new_url:
+        soup = soup = BeautifulSoup(urllib2.urlopen(new_url.a['href']))
+    lista_episodi = []
+    episodi = soup.find('ul', {'class': 'lista podcast-archive'}).findAll('li')
+    # TODO!!! parsing della data tenendo conto che il numerod di podcast per giorno varia
+    # <span class="small-title red"><span>13 febbraio 201
+    # dataAstrale = soup.findAll('span', {'class': 'small-title red'})
+    if episodi:
+        for episodio in episodi:
+            lista_episodi.append(
+                (
+                    episodio.a['href'],
+                    # translate_date(episodio.a['title']),
+                    '19.12.1982',
+                    episodio.a['title'])
+                )
+
+    #Passo finale: aggiungi il link alla pagina successiva
+    nextpage = soup.find('a', {'class': 'nextpostslink'})
+    if not nextpage:
+        nextpageurl = ''
+    else:
+        nextpageurl = nextpage['href']
+    return lista_episodi, nextpageurl, img
+
+
 def get_epfile(url):
     """
     Return the file (mp3) URL to be read from the website to play the selected
@@ -318,15 +369,6 @@ def get_epfile(url):
 # LISTA = get_podcast_list()
 # prog = LISTA[15]
 
-# for ep in prog:
+# DCI = get_episodi_podcast('http://www.deejay.it/audio/?podcast=deejay-chiama-italia', None)
+# for ep in DCI:
 #     print ep
-
-# episodi = prog[4]
-# print episodi
-# for ep in episodi:
-#     print 'ep[0]:'
-#     print ep[0]
-#     print ep[0].encode('ascii','ignore')
-#     print 'ep[1]:'
-#     print ep[1]
-#     print ep[0].encode('ascii','ignore')
