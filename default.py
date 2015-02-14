@@ -42,18 +42,18 @@ def build_url(query):
 MODE = ARGS.get('mode', None)
 
 if MODE is None:
-    li = xbmcgui.ListItem('RELOADED')
+    LI = xbmcgui.ListItem('RELOADED')
     xbmcplugin.addDirectoryItem(
         handle=ADDON_HANDLE,
         url=build_url({'mode': 'reloaded'}),
-        listitem=li,
+        listitem=LI,
         isFolder=True
         )
-    li = xbmcgui.ListItem('PODCAST')
+    LI = xbmcgui.ListItem('PODCAST')
     xbmcplugin.addDirectoryItem(
         handle=ADDON_HANDLE,
         url=build_url({'mode': 'podcast'}),
-        listitem=li,
+        listitem=LI,
         isFolder=True
         )
 elif MODE[0] == 'reloaded':
@@ -179,7 +179,7 @@ elif MODE[0] == 'podcast':
                     'showThumb': prog[1],
                     'title': ep[0].encode('ascii', 'ignore'),
                     'progName': prog[0]})
-                LI = xbmcgui.ListItem('> '+ep[0], iconImage=prog[1])
+                LI = xbmcgui.ListItem(u"\u2022"+' '+ep[0], iconImage=prog[1])
                 LI.setProperty('IsPlayable', 'true')
                 LI.setInfo('music', {'date': prog[3], 'count': idx})
                 xbmcplugin.addDirectoryItem(handle=ADDON_HANDLE,
