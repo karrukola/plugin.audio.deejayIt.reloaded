@@ -28,17 +28,29 @@ def month_to_num(date):
     """
     return{
     'Gennaio' : 1,
+    'gennaio' : 1,
     'Febbraio' : 2,
+    'febbraio' : 2,
     'Marzo' : 3,
+    'marzo' : 3,
     'Aprile' : 4,
+    'aprile' : 4,
     'Maggio' : 5,
+    'maggio' : 5,
     'Giugno' : 6,
+    'giugno' : 6,
     'Luglio' : 7,
+    'luglio' : 7,
     'Agosto' : 8,
+    'agosto' : 8,
     'Settembre' : 9,
+    'settembre' : 9,
     'Ottobre' : 10,
+    'ottobre' : 10,
     'Novembre' : 11,
-    'Dicembre' : 12
+    'novembre' : 11,
+    'Dicembre' : 12,
+    'dicembre' : 12
     }[date]
 
 
@@ -269,6 +281,23 @@ def get_episodi_reloaded(url, oldimg):
 
 def get_episodi_podcast(url, oldimg):
     """
+    Return all the available episodes of the selected podcast show. A single
+    webpage is parsed.
+    Input
+        url is the site's page that lists all the available episodes. E.g.:
+        i) http://www.deejay.it/audio/20141215-10/412901/ or
+        ii) http://www.deejay.it/audio/?podcast=ciao-belli
+        oldimg is a string carrying the path of the picture to be used as
+        fanArt. This must be extracted from type i) pages and passed when
+        parsing type ii) pages from which you can't retrieve such info.
+    Output
+    lista_episodi an array of tuples carrying the episode's details:
+    (link to the webpage where you play the episode to be used by get_epfile(),
+        Date,
+        Episode's title)
+    nextpageurl is the URL of the next page listing the older episodes of the
+    show, if any.
+    img, that is the fanArt URL to be used for every episode of the Reloaded.
     """
     soup = BeautifulSoup(urllib2.urlopen(url))
     #If the fanArt URL is already know there is no need to re-extract it since
@@ -296,16 +325,19 @@ def get_episodi_podcast(url, oldimg):
         soup = soup = BeautifulSoup(urllib2.urlopen(new_url.a['href']))
     lista_episodi = []
     episodi = soup.find('ul', {'class': 'lista podcast-archive'}).findAll('li')
-    # TODO!!! parsing della data tenendo conto che il numerod di podcast per giorno varia
-    # <span class="small-title red"><span>13 febbraio 201
-    # dataAstrale = soup.findAll('span', {'class': 'small-title red'})
     if episodi:
+        data_ep = '19.12.1982'
+        # The date is defined only for the first podcast episode of the day; we
+        # have to store it across loop iterations. If nothing is found then
+        # 19.12.1982 is returned.
         for episodio in episodi:
+            tmp = episodio.find('span', {'class': 'small-title red'})
+            if tmp is not None:
+                data_ep = translate_date(tmp.text)
             lista_episodi.append(
                 (
                     episodio.a['href'],
-                    # translate_date(episodio.a['title']),
-                    '19.12.1982',
+                    data_ep,
                     episodio.a['title'])
                 )
 
