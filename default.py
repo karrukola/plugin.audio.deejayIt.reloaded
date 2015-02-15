@@ -124,7 +124,7 @@ elif MODE[0] in ('reloadedEpList', 'podcastEpList'):
                                         listitem=LI)
         if NEXTPAGE:
             #Questo aggiunge la prossima pagina
-            URL = build_url({'mode': 'reloadedEpList',
+            URL = build_url({'mode': MODE[0],
                              'progName': PROG_NAME,
                              'lastReloadedUrl': NEXTPAGE,
                              'showThumb': SHOW_THUMB,
@@ -180,6 +180,7 @@ elif MODE[0] == 'podcast':
                     'title': ep[0].encode('ascii', 'ignore'),
                     'progName': prog[0]})
                 LI = xbmcgui.ListItem(u"\u2022"+' '+ep[0], iconImage=prog[1])
+                # bullet list for episodes
                 LI.setProperty('IsPlayable', 'true')
                 LI.setInfo('music', {'date': prog[3], 'count': idx})
                 xbmcplugin.addDirectoryItem(handle=ADDON_HANDLE,
