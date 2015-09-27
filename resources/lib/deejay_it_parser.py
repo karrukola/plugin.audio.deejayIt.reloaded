@@ -133,6 +133,8 @@ def get_reloaded_list_in_page(url, reloaded_list):
     soup = BeautifulSoup(urllib2.urlopen(url))
     prog_list = soup.find('ul', {'class': 'block-grid four-up mobile-two-up'}).findAll('li')
     for prog in prog_list:
+        # This is needed for issue #14, sometimes the show is has got no
+        # picture. In this case we fall back to DeeJay grayscale logo.
         if prog.img:
             url_immagine = prog.img['src']
         else:
