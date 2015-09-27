@@ -91,6 +91,22 @@ def translate_date(ep_title):
         translated_date = '19.12.1982'
     return translated_date
 
+def get_img(soup):
+    player = soup.find('div', {'id': 'playerCont'})
+    if not player:
+#            xbmc.log('fanArt: div id playerCont not found', 1)
+        img = None
+    else:
+        hit = re.findall("image=(.*.jpg)",
+            player.iframe['src'])
+        if not hit:
+#                xbmc.log('fanArt: regex does not match', 1)
+            img = None
+        else:
+            img = hit[0]
+#                xbmc.log('fanArt:'+img, 1)
+    return img
+
 
 def get_reloaded_list_in_page(url, reloaded_list):
     """
@@ -240,19 +256,7 @@ def get_episodi_reloaded(url, oldimg):
     if oldimg is not None:
         img = oldimg[0]
     else:
-        player = soup.find('div', {'id': 'playerCont'})
-        if not player:
-#            xbmc.log('fanArt: div id playerCont not found', 1)
-            img = None
-        else:
-            hit = re.findall("image=(.*.jpg)",
-                player.iframe['src'])
-            if not hit:
-#                xbmc.log('fanArt: regex does not match', 1)
-                img = None
-            else:
-                img = hit[0]
-#                xbmc.log('fanArt:'+img, 1)
+        img = get_img(soup)
 
     new_url = soup.find('span', {'class': 'small-title'})
     # This is as the user pressed on Archivio+
@@ -305,19 +309,7 @@ def get_episodi_podcast(url, oldimg):
     if oldimg is not None:
         img = oldimg[0]
     else:
-        player = soup.find('div', {'id': 'playerCont'})
-        if not player:
-#            xbmc.log('fanArt: div id playerCont not found', 1)
-            img = None
-        else:
-            hit = re.findall("image=(.*.jpg)",
-                player.iframe['src'])
-            if not hit:
-#                xbmc.log('fanArt: regex does not match', 1)
-                img = None
-            else:
-                img = hit[0]
-#                xbmc.log('fanArt:'+img, 1)
+        img = get_img(soup)
 
     new_url = soup.find('span', {'class': 'small-title'})
     # This is as the user pressed on Archivio+
@@ -378,8 +370,8 @@ def get_epfile(url):
 
 
 #    ---------------------------------------------------
-#PROGRAMMI = get_reloaded_list()
-#for p in PROGRAMMI:
+# PROGRAMMI = get_reloaded_list()
+# for p in PROGRAMMI:
 #    print p
 
 #p = PROGRAMMI[17][2]
