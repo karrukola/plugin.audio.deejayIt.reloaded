@@ -133,11 +133,15 @@ def get_reloaded_list_in_page(url, reloaded_list):
     soup = BeautifulSoup(urllib2.urlopen(url))
     prog_list = soup.find('ul', {'class': 'block-grid four-up mobile-two-up'}).findAll('li')
     for prog in prog_list:
-        prog_name_url = prog.a
+        if prog.img:
+            url_immagine = prog.img['src']
+        else:
+            url_immagine = 'http://www.deejay.it/wp-content/themes/deejay/images/logo.png'
+
         reloaded_list.append(
-            (prog_name_url['title'],
-                prog.img['src'],
-                prog_name_url['href'],
+            (prog.a['title'],
+                url_immagine,
+                prog.a['href'],
                 translate_date(prog.hgroup.span.string))
             )
     nextpage = soup.find('a', {'class': 'nextpostslink'})
