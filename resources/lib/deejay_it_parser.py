@@ -181,14 +181,15 @@ def get_reloaded_list():
     lista, nextpageurl = get_reloaded_list_in_page(url, [])
     while nextpageurl:
         lista, nextpageurl = get_reloaded_list_in_page(nextpageurl, lista)
-    #Appending Dee Giallo
-    lista.append(
-        ('Dee Giallo',
-            'http://www.deejay.it/wp-content/themes/deejay/images/logo.png',
-            'http://www.deejay.it/audio/20130526-4/269989/',
-            '26.05.2013'
-            )
-        )
+    # Appending Dee Giallo
+    # Dee Giallo is now (27 Sep 2015) back in the list returned by the website.
+    # lista.append(
+    #     ('Dee Giallo',
+    #         'http://www.deejay.it/wp-content/themes/deejay/images/logo.png',
+    #         'http://www.deejay.it/audio/20130526-4/269989/',
+    #         '26.05.2013'
+    #         )
+    #     )
     return lista
 
 
