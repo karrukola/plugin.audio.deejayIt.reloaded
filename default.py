@@ -12,6 +12,7 @@ import resources.lib.deejay_it_parser as deejay
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
+import xbmc
 
 
 __settings__ = xbmcaddon.Addon(id='plugin.audio.deejayIt.reloaded')
