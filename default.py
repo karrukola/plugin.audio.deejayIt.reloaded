@@ -168,7 +168,7 @@ elif MODE[0] == 'podcast':
     else:
         for idx, prog in enumerate(LISTA):
             url = build_url({'mode': 'podcastEpList',
-                             'progName': prog[0],
+                             'progName': prog[0].encode('ascii', 'ignore'),
                              'lastReloadedUrl': prog[2],
                              'showThumb': prog[1]})
             li = xbmcgui.ListItem(prog[0], iconImage=prog[1])
@@ -182,7 +182,7 @@ elif MODE[0] == 'podcast':
                     'epUrl': ep[1],
                     'showThumb': prog[1],
                     'title': ep[0].encode('ascii', 'ignore'),
-                    'progName': prog[0]})
+                    'progName': prog[0].encode('ascii', 'ignore')})
                 LI = xbmcgui.ListItem(u"\u2022"+' '+ep[0], iconImage=prog[1])
                 # bullet list for episodes
                 LI.setProperty('IsPlayable', 'true')
