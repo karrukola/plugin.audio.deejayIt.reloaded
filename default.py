@@ -36,6 +36,7 @@ def build_reloaded_list(shows):
                          'rid': shows[show]['rid'],
                          'art': shows[show]['art'],
                          'icon': shows[show]['icon'],
+                         'speakers': shows[show]['speakers'],
                          'show_name': shows[show]['title'].encode("ascii","ignore")})
         # this is still a folder, so isFolder must be True
         show_list.append((url, li, True))
@@ -51,7 +52,7 @@ def adj_title(testo):
     except ValueError:
         return testo
 
-def build_episodes_list(episodes, icon, art, show_name):
+def build_episodes_list(episodes, icon, art, show_name, speakers):
     ep_list = []
     for ep in episodes:
         ep_title = adj_title(episodes[ep]['title'])
@@ -65,18 +66,19 @@ def build_episodes_list(episodes, icon, art, show_name):
                          'url': episodes[ep]['file'],
                          'thumb': icon,
                          'ep_title': ep_title,
-                         'show_name': show_name})
+                         'show_name': show_name,
+                         'speakers': speakers})
         ep_list.append((url, li, False))
     xbmcplugin.addDirectoryItems(ADDON_HANDLE, ep_list, len(ep_list))
     xbmcplugin.setContent(ADDON_HANDLE, 'songs')
     xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
-def play_song(url, thumb, ep_title, show_name):
+def play_song(url, thumb, ep_title, show_name, speakers):
     play_item = xbmcgui.ListItem(path=url)
     play_item.setThumbnailImage(thumb)
     play_item.setInfo('music', {'title': ep_title,
                                 'album': show_name,
-                                'artist': '!!!TODO!!!'})
+                                'artist': speakers})
     xbmcplugin.setResolvedUrl(ADDON_HANDLE, True, listitem=play_item)
 
 def main():
@@ -96,13 +98,15 @@ def main():
         build_episodes_list(ep_data,
                             icon=args.get('icon', None)[0],
                             art=args.get('art', None)[0],
-                            show_name=args.get('show_name', None)[0])
+                            show_name=args.get('show_name', None)[0],
+                            speakers=args.get('speakers')[0])
 
     elif mode[0] == 'stream':
         play_song(url=args['url'][0],
                   thumb=args.get('thumb')[0],
                   ep_title=args.get('ep_title')[0],
-                  show_name=args.get('show_name')[0])
+                  show_name=args.get('show_name')[0],
+                  speakers=args.get('speakers')[0])
 
 if __name__ == '__main__':
     ADDON_HANDLE = int(sys.argv[1])

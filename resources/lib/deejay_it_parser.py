@@ -31,6 +31,17 @@ class DeejayItParser:
         return json.loads(hres.read().decode("utf-8"))
 
 
+    def _get_speakers(self, data):
+        spks = []
+        # some shows do not have a spekears property
+        try:
+            for spkr in data['speakers']:
+                spks.append(spkr['title'])
+            return ', '.join(spks)
+        except KeyError:
+            return None
+
+
     def get_reloaded_list(self):
         podcasts = {}
         index = 1
@@ -44,7 +55,8 @@ class DeejayItParser:
                     'icon': show['images']['size_320x240'],
                     'art': show['images']['size_full'],
                     'rid': show['reloaded_id'],
-                    'pid': show['podcast_id']}})
+                    'pid': show['podcast_id'],
+                    'speakers': self._get_speakers(show)}})
                 index += 1
         return podcasts
 
