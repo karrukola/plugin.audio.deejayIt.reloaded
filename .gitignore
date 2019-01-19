@@ -1,4 +1,7 @@
 *.pyc
 *.pyo
+*.bak
 plugin.audio.deejayIt.reloaded.sublime-project
 plugin.audio.deejayIt.reloaded.sublime-workspace
+reports/*
+.scannerwork/*
