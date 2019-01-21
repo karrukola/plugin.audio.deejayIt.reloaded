@@ -1,5 +1,5 @@
 #!/usr/bin/python2
-from resources.lib.utilz import UtilzException, is_leap_year, month_days
+from resources.lib.utilz import is_leap_year, month_days, get_dates
 import pytest
 
 
@@ -45,15 +45,15 @@ class TestMonthDays:
         assert month_days('01', '2018') == '31'
 
     def test_mese_zero(self):
-        with pytest.raises(UtilzException):
+        with pytest.raises(TypeError):
             month_days('00', '2018')
 
     def test_mese_tredici(self):
-        with pytest.raises(UtilzException):
+        with pytest.raises(TypeError):
             month_days('13', '2018')
 
     def test_mese_int_no_str(self):
-        with pytest.raises(UtilzException):
+        with pytest.raises(TypeError):
             month_days(2, '2018')
 
     def test_mese_anno_no_str(self):
@@ -63,11 +63,11 @@ class TestMonthDays:
         assert month_days('02', '2016') == '29'
 
     def test_mese_no_leading_zero(self):
-        with pytest.raises(UtilzException):
+        with pytest.raises(TypeError):
             month_days('2', '2018')
 
     def test_mese_too_many_leading_zero(self):
-        with pytest.raises(UtilzException):
+        with pytest.raises(TypeError):
             month_days('002', '2018')
 
 
@@ -84,3 +84,27 @@ class TestIsLeapYear:
 
     def test_is_leap_year_2017(self):
         assert is_leap_year(2017) is False
+
+
+class TestGetDates:
+
+    def test_get_dates_beginning_of_year(self):
+        assert get_dates('201701') == ('2016-12-31', '2016-12-01')
+
+    def test_get_dates_leap_year(self):
+        assert get_dates('201603') == ('2016-02-29', '2016-02-01')
+
+    def test_get_dates_non_leap_year(self):
+        assert get_dates('201703') == ('2017-02-28', '2017-02-01')
+
+    def test_get_dates_integer(self):
+        with pytest.raises(TypeError):
+            get_dates(201812)
+
+    def test_get_dates_short_input(self):
+        with pytest.raises(TypeError):
+            get_dates('20181')
+
+    def test_get_dates_long_input(self):
+        with pytest.raises(TypeError):
+            get_dates('2018011')

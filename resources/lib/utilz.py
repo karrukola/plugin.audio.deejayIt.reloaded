@@ -1,10 +1,6 @@
 #!/usr/bin/python2
 
 
-class UtilzException(Exception):
-    pass
-
-
 def is_leap_year(year):
     answ = False
     if (year % 4) == 0:
@@ -31,11 +27,13 @@ def month_days(mese, anno):
     elif mese in ('01', '03', '05', '07', '08', '10', '12'):
         days = '31'
     else:
-        raise UtilzException
+        raise TypeError
     return days
 
 
 def get_dates(yyyymm):
+    if len(yyyymm) > 6:
+        raise TypeError
     mm = yyyymm[4:6]
     yyyy = yyyymm[0:4]
 
