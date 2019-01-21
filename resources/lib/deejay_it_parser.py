@@ -1,6 +1,7 @@
 #!/usr/bin/python2
 import urllib2
 import simplejson as json
+import utilz
 
 
 class DeejayItParser:
@@ -24,7 +25,6 @@ class DeejayItParser:
                                  'Sunday Morning',
                                  'Vic e Valentina Ricci')
 
-
     def _q_and_r(self, sp_qry):
         query_url = self.base_url + sp_qry
         hres = urllib2.urlopen(query_url)
@@ -40,7 +40,6 @@ class DeejayItParser:
             return ', '.join(spks)
         except KeyError:
             return None
-
 
     def get_reloaded_list(self):
         podcasts = {}
@@ -60,9 +59,8 @@ class DeejayItParser:
                 index += 1
         return podcasts
 
-
     def get_latest_ep(self, pid, rid):
-        query = 'archive_ondemand?last_day=1&pid=%s&rid=%s' %(pid, rid)
+        query = 'archive_ondemand?last_day=1&pid=%s&rid=%s' % (pid, rid)
         data = self._q_and_r(query)
         first_json_key = data[0].keys()[0]
         ep_data = data[0][first_json_key]['reloaded']
@@ -70,27 +68,28 @@ class DeejayItParser:
                        'file': ep_data['file']}}
         return episode
 
-
     def get_latest_ep_date(self, pid, rid):
-        query = 'archive_ondemand?last_day=1&pid=%s&rid=%s' %(pid, rid)
+        query = 'archive_ondemand?last_day=1&pid=%s&rid=%s' % (pid, rid)
         data = self._q_and_r(query)
         return data[0].keys()[0]
 
-
-    def get_episodes(self, pid, rid, ep_type):
-        date = self.get_latest_ep_date(pid, rid)
-        end_date = '%s-%s-%s' %(date[0:4], date[4:6], date[6:8])
-        start_date = '%s-%s-01' %(date[0:4], date[4:6])
+    def get_episodes(self, pid, rid, ep_type, yyyymm=None):
+        if yyyymm is None:
+            date = self.get_latest_ep_date(pid, rid)
+            end_date = '%s-%s-%s' % (date[0:4], date[4:6], date[6:8])
+            # start_date = '%s-%s-01' %(date[0:4], date[4:6])
+            start_date = '2018-12-01'
+        else:
+            end_date, start_date = utilz.get_dates(yyyymm)
 
         eps = {}
         index = 1
-        query = 'archive_ondemand?date_end=%s&date_start=%s&pid=%s&rid=%s' %(end_date, start_date, pid, rid)
+        query = 'archive_ondemand?date_end=%s&date_start=%s&pid=%s&rid=%s' % (end_date, start_date, pid, rid)
         data = self._q_and_r(query)
         for d in data:
             for date in d.keys():
                 for r_type in d[date].keys():
                     if r_type == ep_type:
-                        print d[date][r_type]
                         eps.update({index: {
                             'title': d[date][r_type]['title'],
                             'file': d[date][r_type]['file'],
