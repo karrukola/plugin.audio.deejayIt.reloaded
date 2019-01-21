@@ -37,7 +37,8 @@ def build_reloaded_list(shows):
                          'art': shows[show]['art'],
                          'icon': shows[show]['icon'],
                          'speakers': shows[show]['speakers'],
-                         'show_name': shows[show]['title'].encode("ascii","ignore")})
+                         'show_name': shows[show]['title'].encode("ascii",
+                                                                  "ignore")})
         # this is still a folder, so isFolder must be True
         show_list.append((url, li, True))
     xbmcplugin.addDirectoryItems(ADDON_HANDLE,
@@ -45,12 +46,14 @@ def build_reloaded_list(shows):
                                  len(show_list))
     xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
+
 def adj_title(testo):
     try:
         int(testo)
-        return 'Puntata del %s-%s-%s' %(testo[6:8], testo[4:6], testo[0:4])
+        return 'Puntata del %s-%s-%s' % (testo[6:8], testo[4:6], testo[0:4])
     except ValueError:
         return testo
+
 
 def build_episodes_list(episodes, icon, art, show_name, speakers):
     ep_list = []
@@ -73,6 +76,7 @@ def build_episodes_list(episodes, icon, art, show_name, speakers):
     xbmcplugin.setContent(ADDON_HANDLE, 'songs')
     xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
+
 def play_song(url, thumb, ep_title, show_name, speakers):
     play_item = xbmcgui.ListItem(path=url)
     play_item.setThumbnailImage(thumb)
@@ -80,6 +84,7 @@ def play_song(url, thumb, ep_title, show_name, speakers):
                                 'album': show_name,
                                 'artist': speakers})
     xbmcplugin.setResolvedUrl(ADDON_HANDLE, True, listitem=play_item)
+
 
 def main():
     args = urlparse.parse_qs(sys.argv[2][1:])
@@ -107,6 +112,7 @@ def main():
                   ep_title=args.get('ep_title')[0],
                   show_name=args.get('show_name')[0],
                   speakers=args.get('speakers')[0])
+
 
 if __name__ == '__main__':
     ADDON_HANDLE = int(sys.argv[1])
