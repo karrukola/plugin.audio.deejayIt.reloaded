@@ -74,7 +74,6 @@ def build_episodes_list(episodes, icon, art, show_name, speakers):
         ep_list.append((url, li, False))
     xbmcplugin.addDirectoryItems(ADDON_HANDLE, ep_list, len(ep_list))
     xbmcplugin.setContent(ADDON_HANDLE, 'songs')
-    xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
 
 def play_song(url, thumb, ep_title, show_name, speakers):
@@ -105,6 +104,7 @@ def main():
                             art=args.get('art', None)[0],
                             show_name=args.get('show_name', None)[0],
                             speakers=args.get('speakers')[0])
+        xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
     elif mode[0] == 'stream':
         play_song(url=args['url'][0],
