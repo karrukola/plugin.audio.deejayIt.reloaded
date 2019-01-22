@@ -77,8 +77,7 @@ class DeejayItParser:
         if yyyymm is None:
             date = self.get_latest_ep_date(pid, rid)
             end_date = '%s-%s-%s' % (date[0:4], date[4:6], date[6:8])
-            # start_date = '%s-%s-01' %(date[0:4], date[4:6])
-            start_date = '2018-12-01'
+            start_date = '%s-%s-01' % (date[0:4], date[4:6])
         else:
             end_date, start_date = utilz.get_dates(yyyymm)
 
