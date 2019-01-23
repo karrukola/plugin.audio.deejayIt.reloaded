@@ -1,3 +1,5 @@
+[B]2.0.0[/B]
+- Major update to use the same JSON APIs that mobile apps use.
 [B]1.6.2[/B]
 - Fixing issue #16
 - Code cleanup

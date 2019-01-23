@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.audio.deejayIt.reloaded" name="DeeJay reloaded" version="1.6.2" provider-name="Filippo Carra">
+<addon id="plugin.audio.deejayit" name="DeeJay" version="2.0.0" provider-name="Filippo Carra">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
-        <import addon="script.module.beautifulsoup" version="3.2.1"/>
+        <import addon="script.module.simplejson"/>
     </requires>
     <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>audio</provides>
