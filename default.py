@@ -85,6 +85,23 @@ def play_song(url, thumb, ep_title, show_name, speakers):
     xbmcplugin.setResolvedUrl(ADDON_HANDLE, True, listitem=play_item)
 
 
+def add_next_ep_page(args, yyyymm):
+    li = xbmcgui.ListItem(label="Next page")
+    url = build_url({'mode': 'reloadedEpList',
+                     'pid': args.get('pid', None)[0],
+                     'rid': args.get('rid', None)[0],
+                     'icon': args.get('icon', None)[0],
+                     'art': args.get('art', None)[0],
+                     'speakers': args.get('speakers')[0],
+                     'show_name': args.get('show_name', None)[0].encode("ascii",
+                                                                        "ignore"),
+                     'yyyymm': yyyymm})
+    xbmcplugin.addDirectoryItem(ADDON_HANDLE,
+                                url=url,
+                                listitem=li,
+                                isFolder=True)
+
+
 def main():
     args = urlparse.parse_qs(sys.argv[2][1:])
     mode = args.get('mode', None)
@@ -96,14 +113,19 @@ def main():
         build_reloaded_list(deejay.get_reloaded_list())
     elif mode[0] == 'reloadedEpList':
         deejay = DeejayItParser()
-        ep_data = deejay.get_episodes(pid=args.get('pid', None)[0],
-                                      rid=args.get('rid', None)[0],
-                                      ep_type='reloaded')
+        yyyymm = args.get('yyyymm', None)
+        if yyyymm:
+            yyyymm = yyyymm[0]
+        ep_data, yyyymm = deejay.get_episodes(pid=args.get('pid', None)[0],
+                                              rid=args.get('rid', None)[0],
+                                              ep_type='reloaded',
+                                              yyyymm=yyyymm)
         build_episodes_list(ep_data,
                             icon=args.get('icon', None)[0],
                             art=args.get('art', None)[0],
                             show_name=args.get('show_name', None)[0],
                             speakers=args.get('speakers')[0])
+        add_next_ep_page(args, yyyymm)
         xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
     elif mode[0] == 'stream':

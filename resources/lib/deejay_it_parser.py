@@ -30,7 +30,6 @@ class DeejayItParser:
         hres = urllib2.urlopen(query_url)
         return json.loads(hres.read().decode("utf-8"))
 
-
     def _get_speakers(self, data):
         spks = []
         # some shows do not have a spekears property
@@ -94,4 +93,4 @@ class DeejayItParser:
                             'file': d[date][r_type]['file'],
                             'date': date}})
                         index += 1
-        return eps
+        return eps, date[0:6]
