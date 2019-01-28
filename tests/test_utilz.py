@@ -73,16 +73,16 @@ class TestMonthDays:
 
 class TestIsLeapYear:
 
-    def test_is_leap_year_2000(self):
+    def test_years_divisible_by_400_are_leap_years(self):
         assert is_leap_year(2000) is True
 
-    def test_is_leap_year_1900(self):
+    def test_years_divisible_by_100_but_not_by_400_are_leap_years(self):
         assert is_leap_year(1900) is False
 
-    def test_is_leap_year_2016(self):
-        assert is_leap_year(2000) is True
+    def test_years_divisible_by_4_by_not_by_100_are_leap_years(self):
+        assert is_leap_year(2016) is True
 
-    def test_is_leap_year_2017(self):
+    def test_years_not_divisible_by_4_are_not_leap_years(self):
         assert is_leap_year(2017) is False
 
 

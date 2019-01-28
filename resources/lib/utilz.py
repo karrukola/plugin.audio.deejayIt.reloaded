@@ -2,15 +2,10 @@
 
 
 def is_leap_year(year):
-    answ = False
-    if (year % 4) == 0:
-        if (year % 100) == 0:
-            answ = bool((year % 400) == 0)
-        else:
-            answ = True
-    else:
-        answ = False
-    return answ
+    return (
+        year % 4 == 0 and
+        year % 100 != 0 or
+        year % 400 == 0)
 
 
 def month_days(mese, anno):
