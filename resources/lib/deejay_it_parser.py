@@ -104,9 +104,10 @@ class DeejayItParser:
             for date in d.keys():
                 for r_type in d[date].keys():
                     if r_type == ep_type:
-                        eps.update({index: {
-                            'title': d[date][r_type]['title'],
-                            'file': d[date][r_type]['file'],
-                            'date': date}})
+                        if d[date][r_type]:
+                            eps.update({index: {
+                                'title': d[date][r_type]['title'],
+                                'file': d[date][r_type]['file'],
+                                'date': date}})
                         index += 1
         return eps, date[0:6]
