@@ -7,7 +7,8 @@ import xbmcplugin
 from resources.lib.deejay_it_parser import DeejayItParser
 
 
-def build_url(query):
+def build_url(
+        query):
     base_url = sys.argv[0]
     return base_url + '?' + urllib.urlencode(query)
 
@@ -23,7 +24,8 @@ def show_mode_choice():
     xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
 
-def build_reloaded_list(shows):
+def build_reloaded_list(
+        shows):
     show_list = []
     for show in shows:
         li = xbmcgui.ListItem(label=shows[show]['title'],
@@ -47,7 +49,8 @@ def build_reloaded_list(shows):
     xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
 
-def adj_title(testo):
+def adj_title(
+        testo):
     try:
         int(testo)
         return 'Puntata del %s-%s-%s' % (testo[6:8], testo[4:6], testo[0:4])
@@ -55,22 +58,30 @@ def adj_title(testo):
         return testo
 
 
-def build_episodes_list(episodes, icon, art, show_name, speakers):
+def build_episodes_list(
+        episodes,
+        icon,
+        art,
+        show_name,
+        speakers):
     ep_list = []
     for ep in episodes:
         ep_title = adj_title(episodes[ep]['title'])
-        li = xbmcgui.ListItem(label=ep_title,
-                              iconImage=icon)
+        li = xbmcgui.ListItem(
+            label=ep_title,
+            iconImage=icon)
         li.setProperty('fanart_image', art)
         li.setProperty('IsPlayable', 'true')
-        li.setInfo('music', {'date': episodes[ep]['date'],
-                             'count': ep})
-        url = build_url({'mode': 'stream',
-                         'url': episodes[ep]['file'],
-                         'thumb': icon,
-                         'ep_title': ep_title,
-                         'show_name': show_name,
-                         'speakers': speakers})
+        li.setInfo(
+            'music',
+            {'date': episodes[ep]['date'], 'count': ep})
+        url = build_url(
+            {'mode': 'stream',
+             'url': episodes[ep]['file'],
+             'thumb': icon,
+             'ep_title': ep_title,
+             'show_name': show_name,
+             'speakers': speakers})
         ep_list.append((url, li, False))
     xbmcplugin.addDirectoryItems(ADDON_HANDLE, ep_list, len(ep_list))
     xbmcplugin.setContent(ADDON_HANDLE, 'songs')
@@ -87,15 +98,15 @@ def play_song(url, thumb, ep_title, show_name, speakers):
 
 def add_next_ep_page(args, yyyymm):
     li = xbmcgui.ListItem(label="Next page")
-    url = build_url({'mode': 'reloadedEpList',
-                     'pid': args.get('pid', None)[0],
-                     'rid': args.get('rid', None)[0],
-                     'icon': args.get('icon', None)[0],
-                     'art': args.get('art', None)[0],
-                     'speakers': args.get('speakers')[0],
-                     'show_name': args.get('show_name', None)[0].encode("ascii",
-                                                                        "ignore"),
-                     'yyyymm': yyyymm})
+    url = build_url(
+        {'mode': 'reloadedEpList',
+         'pid': args.get('pid', None)[0],
+         'rid': args.get('rid', None)[0],
+         'icon': args.get('icon', None)[0],
+         'art': args.get('art', None)[0],
+         'speakers': args.get('speakers')[0],
+         'show_name': args.get('show_name', None)[0].encode("ascii", "ignore"),
+         'yyyymm': yyyymm})
     xbmcplugin.addDirectoryItem(ADDON_HANDLE,
                                 url=url,
                                 listitem=li,

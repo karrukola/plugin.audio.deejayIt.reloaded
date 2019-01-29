@@ -1,7 +1,7 @@
 #!/usr/bin/python2
 import urllib2
 import simplejson as json
-import utilz
+import resources.lib.utilz as utilz
 
 
 class DeejayItParser:
