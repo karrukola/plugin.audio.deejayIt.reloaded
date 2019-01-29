@@ -27,7 +27,7 @@ def month_days(mese, anno):
 
 
 def get_dates(yyyymm):
-    if len(yyyymm) > 6:
+    if len(yyyymm) != 6:
         raise TypeError
     mm = yyyymm[4:6]
     yyyy = yyyymm[0:4]
