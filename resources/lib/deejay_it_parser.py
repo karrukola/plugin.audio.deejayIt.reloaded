@@ -25,12 +25,16 @@ class DeejayItParser:
                                  'Sunday Morning',
                                  'Vic e Valentina Ricci')
 
-    def _q_and_r(self, sp_qry):
+    def _q_and_r(
+            self,
+            sp_qry):
         query_url = self.base_url + sp_qry
         hres = urllib2.urlopen(query_url)
         return json.loads(hres.read().decode("utf-8"))
 
-    def _get_speakers(self, data):
+    def _get_speakers(
+            self,
+            data):
         spks = []
         # some shows do not have a spekears property
         try:
@@ -40,7 +44,8 @@ class DeejayItParser:
         except KeyError:
             return None
 
-    def get_reloaded_list(self):
+    def get_reloaded_list(
+            self):
         podcasts = {}
         index = 1
         data = self._q_and_r('programs_ondemand?section=radio')
@@ -58,7 +63,10 @@ class DeejayItParser:
                 index += 1
         return podcasts
 
-    def get_latest_ep(self, pid, rid):
+    def get_latest_ep(
+            self,
+            pid,
+            rid):
         query = 'archive_ondemand?last_day=1&pid=%s&rid=%s' % (pid, rid)
         data = self._q_and_r(query)
         first_json_key = data[0].keys()[0]
@@ -67,12 +75,20 @@ class DeejayItParser:
                        'file': ep_data['file']}}
         return episode
 
-    def get_latest_ep_date(self, pid, rid):
+    def get_latest_ep_date(
+            self,
+            pid,
+            rid):
         query = 'archive_ondemand?last_day=1&pid=%s&rid=%s' % (pid, rid)
         data = self._q_and_r(query)
         return data[0].keys()[0]
 
-    def get_episodes(self, pid, rid, ep_type, yyyymm=None):
+    def get_episodes(
+            self,
+            pid,
+            rid,
+            ep_type,
+            yyyymm=None):
         if yyyymm is None:
             date = self.get_latest_ep_date(pid, rid)
             end_date = '%s-%s-%s' % (date[0:4], date[4:6], date[6:8])
