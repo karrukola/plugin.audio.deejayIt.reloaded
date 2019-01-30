@@ -7,23 +7,6 @@ import resources.lib.utilz as utilz
 class DeejayItParser:
     def __init__(self):
         self.base_url = 'http://www.deejay.it/api/pub/v1/'
-        self.podcasts_to_skip = ('30 Songs',
-                                 'Colazione da Deejay',
-                                 'Dance Revolution',
-                                 'Deejay Is Your Deejay',
-                                 'Deejay Parade',
-                                 'Djs from Mars on Radio Deejay',
-                                 'FantaDeejay',
-                                 'FM',
-                                 'Gente della notte',
-                                 'Guido al Cinema',
-                                 'L\'Ultimo Bicchiere',
-                                 'Megajay',
-                                 'One Two One Two',
-                                 'Rudy Zerbi',
-                                 'Say Waaad?',
-                                 'Sunday Morning',
-                                 'Vic e Valentina Ricci')
 
     def _q_and_r(
             self,
@@ -51,16 +34,20 @@ class DeejayItParser:
         data = self._q_and_r('programs_ondemand?section=radio')
 
         for show in data:
-            if show['title'] not in self.podcasts_to_skip:
-                podcasts.update({index: {
-                    'title': show['title'],
-                    'description': show['description'],
-                    'icon': show['images']['size_320x240'],
-                    'art': show['images']['size_full'],
-                    'rid': show['reloaded_id'],
-                    'pid': show['podcast_id'],
-                    'speakers': self._get_speakers(show)}})
-                index += 1
+            try:
+                pid = show['podcast_id']
+            except KeyError:
+                pid = None
+
+            podcasts.update({index: {
+                'title': show['title'],
+                'description': show['description'],
+                'icon': show['images']['size_320x240'],
+                'art': show['images']['size_full'],
+                'rid': show['reloaded_id'],
+                'pid': pid,
+                'speakers': self._get_speakers(show)}})
+            index += 1
         return podcasts
 
     def get_latest_ep(

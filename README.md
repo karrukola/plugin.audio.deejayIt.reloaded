@@ -26,6 +26,8 @@ http://www.deejay.it/api/pub/v1/archive_ondemand?last_day=1&pid=225196&rid=22522
 
 # TODO
 
-- [ ] Come cazzo si vedono i podcast di 30 songs?
+- [x] Come cazzo si vedono i podcast di 30 songs?
 - [ ] Cordialemente da un errore (reloaded=Null) - usa JSON
-- [ ] DeeGiall da un errore (titolo puntata in unicode) - usa JSON
+- [ ] DeeGiallo da un errore (titolo puntata in unicode) - usa JSON
+- [ ] DJs from Mars dopo 15-9-2018  http://www.deejay.it/api/pub/v1/archive_ondemand?date_end=2018-08-31&date_start=2018-08-01&pid=None&rid=527359
+- [ ] Vic e Valentina Ricci  http://www.deejay.it/api/pub/v1/archive_ondemand?date_end=2018-08-31&date_start=2018-08-01&pid=None&rid=526841
