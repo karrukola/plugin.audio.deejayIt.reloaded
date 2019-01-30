@@ -105,7 +105,7 @@ def add_next_ep_page(args, yyyymm):
          'icon': args.get('icon', None)[0],
          'art': args.get('art', None)[0],
          'speakers': args.get('speakers')[0],
-         'show_name': args.get('show_name', None)[0].encode("ascii", "ignore"),
+         'show_name': args.get('show_name', None)[0].encode("utf-8", "ignore"),
          'yyyymm': yyyymm})
     xbmcplugin.addDirectoryItem(ADDON_HANDLE,
                                 url=url,
