@@ -85,7 +85,11 @@ class DeejayItParser:
 
         eps = {}
         index = 1
-        query = 'archive_ondemand?date_end=%s&date_start=%s&pid=%s&rid=%s' % (end_date, start_date, pid, rid)
+
+        query = 'archive_ondemand?'
+        query += 'date_end=%s&date_start=%s' % (end_date, start_date)
+        query += '&pid=%s&rid=%s' % (pid, rid)
+
         data = self._q_and_r(query)
         for d in data:
             for date in d.keys():

@@ -10,6 +10,7 @@ from resources.lib.deejay_it_parser import DeejayItParser
 def build_url(
         query):
     base_url = sys.argv[0]
+    xbmc.log(msg=base_url, level=xbmc.LOGDEBUG)
     # We handle unicode as per https://bit.ly/2S1dCPx
     return base_url + '?' + urllib.urlencode(query, 'utf-8')
 
