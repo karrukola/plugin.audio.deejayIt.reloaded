@@ -10,7 +10,8 @@ from resources.lib.deejay_it_parser import DeejayItParser
 def build_url(
         query):
     base_url = sys.argv[0]
-    return base_url + '?' + urllib.urlencode(query)
+    # We handle unicode as per https://bit.ly/2S1dCPx
+    return base_url + '?' + urllib.urlencode(query, 'utf-8')
 
 
 def show_mode_choice():
@@ -39,8 +40,7 @@ def build_reloaded_list(
                          'art': shows[show]['art'],
                          'icon': shows[show]['icon'],
                          'speakers': shows[show]['speakers'],
-                         'show_name': shows[show]['title'].encode("ascii",
-                                                                  "ignore")})
+                         'show_name': shows[show]['title']})
         # this is still a folder, so isFolder must be True
         show_list.append((url, li, True))
     xbmcplugin.addDirectoryItems(ADDON_HANDLE,
@@ -135,7 +135,7 @@ def main():
                             icon=args.get('icon', None)[0],
                             art=args.get('art', None)[0],
                             show_name=args.get('show_name', None)[0],
-                            speakers=args.get('speakers')[0])
+                            speakers=args.get('speakers', None)[0])
         add_next_ep_page(args, yyyymm)
         xbmcplugin.endOfDirectory(ADDON_HANDLE)
 
@@ -144,7 +144,7 @@ def main():
                   thumb=args.get('thumb')[0],
                   ep_title=args.get('ep_title')[0],
                   show_name=args.get('show_name')[0],
-                  speakers=args.get('speakers')[0])
+                  speakers=args.get('speakers', None)[0])
 
 
 if __name__ == '__main__':

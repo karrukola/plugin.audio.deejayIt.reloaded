@@ -27,3 +27,5 @@ http://www.deejay.it/api/pub/v1/archive_ondemand?last_day=1&pid=225196&rid=22522
 # TODO
 
 - [ ] Come cazzo si vedono i podcast di 30 songs?
+- [ ] Cordialemente da un errore (reloaded=Null) - usa JSON
+- [ ] DeeGiall da un errore (titolo puntata in unicode) - usa JSON

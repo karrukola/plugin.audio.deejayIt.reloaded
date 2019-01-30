@@ -36,7 +36,7 @@ class DeejayItParser:
             self,
             data):
         spks = []
-        # some shows do not have a spekears property
+        # some shows do not have a spekears property, i.e. DeeGiallo
         try:
             for spkr in data['speakers']:
                 spks.append(spkr['title'])
