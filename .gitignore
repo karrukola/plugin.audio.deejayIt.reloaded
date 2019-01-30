@@ -2,7 +2,7 @@
 *.pyo
 *.bak
 .coverage
-virtualenv/*
+venv*
 plugin.audio.deejayIt.reloaded.sublime-project
 plugin.audio.deejayIt.reloaded.sublime-workspace
 reports/*
