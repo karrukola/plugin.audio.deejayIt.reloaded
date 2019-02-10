@@ -12,7 +12,6 @@ class DeejayItParser:
             self,
             sp_qry):
         query_url = self.base_url + sp_qry
-        print query_url
         hres = urllib2.urlopen(query_url).read().decode("utf-8")
         if hres == '':
             data_to_ret = None
@@ -122,12 +121,6 @@ class DeejayItParser:
         data = self._q_and_r(query)
         if data is None:
             date = self._calc_next_month(yyyymm)
-            print ">>>>> FC <<<<<"
-            print "yyyymm"
-            print yyyymm
-            print "date"
-            print date
-            print ">>>>> /FC <<<<<"
         else:
             for d in data:
                 for date in d.keys():
