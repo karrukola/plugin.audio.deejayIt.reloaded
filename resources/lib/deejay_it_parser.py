@@ -12,8 +12,13 @@ class DeejayItParser:
             self,
             sp_qry):
         query_url = self.base_url + sp_qry
-        hres = urllib2.urlopen(query_url)
-        return json.loads(hres.read().decode("utf-8"))
+        print query_url
+        hres = urllib2.urlopen(query_url).read().decode("utf-8")
+        if hres == '':
+            data_to_ret = None
+        else:
+            data_to_ret = json.loads(hres)
+        return data_to_ret
 
     def _get_speakers(
             self,
@@ -70,18 +75,42 @@ class DeejayItParser:
         data = self._q_and_r(query)
         return data[0].keys()[0]
 
-    def get_episodes(
+    def _calc_query_dates(
             self,
             pid,
             rid,
-            ep_type,
-            yyyymm=None):
+            yyyymm):
         if yyyymm is None:
             date = self.get_latest_ep_date(pid, rid)
             end_date = '%s-%s-%s' % (date[0:4], date[4:6], date[6:8])
             start_date = '%s-%s-01' % (date[0:4], date[4:6])
         else:
             end_date, start_date = utilz.get_dates(yyyymm)
+        return start_date, end_date
+
+    def _calc_next_month(
+            self,
+            yyyymm):
+        yyyy = yyyymm[0:4]
+        mm = yyyymm[4:6]
+        print yyyy
+        print mm
+        if mm == '01':
+            r_yyyy = str(int(yyyy)-1).zfill(2)
+            r_mm = '12'
+        else:
+            r_yyyy = yyyy
+            r_mm = str(int(mm)-1).zfill(2)
+        return r_yyyy + r_mm
+
+    def get_episodes(
+            self,
+            pid,
+            rid,
+            ep_type,
+            yyyymm=None):
+
+        start_date, end_date = self._calc_query_dates(pid, rid, yyyymm)
 
         eps = {}
         index = 1
@@ -91,14 +120,23 @@ class DeejayItParser:
         query += '&pid=%s&rid=%s' % (pid, rid)
 
         data = self._q_and_r(query)
-        for d in data:
-            for date in d.keys():
-                for r_type in d[date].keys():
-                    if r_type == ep_type:
-                        if d[date][r_type]:
-                            eps.update({index: {
-                                'title': d[date][r_type]['title'],
-                                'file': d[date][r_type]['file'],
-                                'date': date}})
-                        index += 1
+        if data is None:
+            date = self._calc_next_month(yyyymm)
+            print ">>>>> FC <<<<<"
+            print "yyyymm"
+            print yyyymm
+            print "date"
+            print date
+            print ">>>>> /FC <<<<<"
+        else:
+            for d in data:
+                for date in d.keys():
+                    for r_type in d[date].keys():
+                        if r_type == ep_type:
+                            if d[date][r_type]:
+                                eps.update({index: {
+                                    'title': d[date][r_type]['title'],
+                                    'file': d[date][r_type]['file'],
+                                    'date': date}})
+                            index += 1
         return eps, date[0:6]
